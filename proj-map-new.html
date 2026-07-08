@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>map viewer with canvas</title>
+    <style>
+        .control-panel {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 2000;
+            display: flex;
+            gap: 10px;
+        }
+        .control-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .close-btn {
+            background-color: #f44336;
+            color: white;
+        }
+        .confirm-btn {
+            background-color: #4CAF50;
+            color: white;
+            opacity: 0.5;
+            pointer-events: none;
+            display: none;
+        }
+        .confirm-btn.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        #mapCanvas {
+            height: 100%;
+            cursor: grab;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body style="height: 100%; margin: 0; position: relative;">
+    <canvas id="mapCanvas"></canvas>
+    <div class="control-panel" id="controlPanel" style="display: none;">
+        <button class="control-btn close-btn" id="closeBtn">关闭</button>
+        <button class="control-btn confirm-btn" id="confirmBtn">确定</button>
+    </div>
+    <script>
+        function _id(id){ return document.getElementById(id); }
+        
+        // 页面模式和状态变量
+        const mode = new URLSearchParams(window.location.search).get('mode') || 'view';
+        let selectedPoint = null;
+        const canvas = _id("mapCanvas");
+        const ctx = canvas.getContext('2d');
+        const controlPanel = _id("controlPanel");
+        const closeBtn = _id("closeBtn");
+        const confirmBtn = _id("confirmBtn");
+        const mapImage = new Image();
+        mapImage.src = "./mapFX_med.jpg";
+        
+        // 地图拖动和缩放相关变量
+        let mapOffsetX = 0;
+        let mapOffsetY = 0;
+        let mapScale = 0.8;
+        let isDragging = false;
+        let startX, startY;
+        let points = []; // 存储所有点位
+        
+        // 初始化页面
+        function init() {
+            // 设置canvas尺寸
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // 根据模式显示控制按钮
+            if (mode === 'select') {
+                confirmBtn.style.display = 'block';
+            }
+            
+            // 加载URL中的点位数据
+            const pointsParam = new URLSearchParams(window.location.search).get('points');
+            if (pointsParam) {
+                try {
+                    const parsedPoints = JSON.parse(decodeURIComponent(pointsParam));
+                    if (Array.isArray(parsedPoints)) {
+                        points = parsedPoints;
+                    }
+                } catch (e) {
+                    console.error('Failed to parse points:', e);
+                }
+            }
+            
+            // 绘制地图
+            mapImage.onload = drawMap;
+        }
+        
+        // 调整canvas尺寸
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawMap();
+        }
+        
+        // 导航路径动画相位（控制流动箭头）
+        let navPathPhase = 0;
+
+        // 绘制精美的导航路径
+        function drawNavigationPath() {
+            if (!NavPathData || NavPathData.length < 2) return;
+
+            // 收集所有坐标点
+            const pts = NavPathData.map(idx => {
+                if(idx < 0) return buildingData[-idx-1];
+                return crossingData[idx];
+            }).filter(p => p);
+            if (pts.length < 2) return;
+
+            // 计算路径包围盒，用于构造线性渐变
+            let minX = pts[0][0], minY = pts[0][1], maxX = pts[0][0], maxY = pts[0][1];
+            pts.forEach(p => {
+                if (p[0] < minX) minX = p[0];
+                if (p[1] < minY) minY = p[1];
+                if (p[0] > maxX) maxX = p[0];
+                if (p[1] > maxY) maxY = p[1];
+            });
+
+            // ===== 1. 外层发光光晕（柔和阴影） =====
+            ctx.save();
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
+            ctx.shadowBlur = 24;
+            ctx.shadowColor = 'rgba(0, 180, 255, 0.85)';
+            ctx.strokeStyle = 'rgba(0, 200, 255, 0.55)';
+            ctx.lineWidth = 14;
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0], pts[0][1]);
+            for (let i = 1; i < pts.length; i++) {
+                ctx.lineTo(pts[i][0], pts[i][1]);
+            }
+            ctx.stroke();
+
+            // ===== 2. 渐变主体 =====
+            const grad = ctx.createLinearGradient(minX, minY, maxX, maxY);
+            grad.addColorStop(0,   '#00d4ff');
+            grad.addColorStop(0.5, '#0099ff');
+            grad.addColorStop(1,   '#6a5cff');
+            ctx.shadowBlur = 0;
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 7;
+            ctx.stroke();
+
+            // ===== 3. 中心高光 =====
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.75)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // ===== 4. 流动箭头 =====
+            ctx.save();
+            ctx.setLineDash([12, 28]);
+            ctx.lineDashOffset = -navPathPhase;
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0], pts[0][1]);
+            for (let i = 1; i < pts.length; i++) {
+                ctx.lineTo(pts[i][0], pts[i][1]);
+            }
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.restore();
+
+            // ===== 5. 节点装饰 =====
+            pts.forEach((p, i) => {
+                // 外圈光环
+                const haloGrad = ctx.createRadialGradient(p[0], p[1], 1, p[0], p[1], 14);
+                haloGrad.addColorStop(0, 'rgba(0, 200, 255, 0.9)');
+                haloGrad.addColorStop(1, 'rgba(0, 200, 255, 0)');
+                ctx.fillStyle = haloGrad;
+                ctx.beginPath();
+                ctx.arc(p[0], p[1], 14, 0, Math.PI * 2);
+                ctx.fill();
+
+                // 小圆点
+                ctx.fillStyle = '#ffffff';
+                ctx.strokeStyle = '#0099ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(p[0], p[1], 5, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+            });
+
+            // ===== 6. 起点与终点特殊标记 =====
+            const start = pts[0], end = pts[pts.length - 1];
+            // 起点：绿色圆标+文字（若为建筑名则使用建筑名作为标签）
+            const startLabel = navStartLabel ? navStartLabel : '起点';
+            const endLabel = navEndLabel ? navEndLabel : '终点';
+            drawNavigationAnchor(start[0], start[1], startLabel, '#2ecc71', '#145a32');
+            drawNavigationAnchor(end[0], end[1], endLabel, '#ff4757', '#7a1f24');
+        }
+
+        // 绘制导航起止锚点（带图标和标签）
+        function drawNavigationAnchor(x, y, label, fill, stroke) {
+            // 外光环
+            const halo = ctx.createRadialGradient(x, y, 2, x, y, 22);
+            halo.addColorStop(0, fill);
+            halo.addColorStop(1, 'rgba(255,255,255,0)');
+            ctx.fillStyle = halo;
+            ctx.beginPath();
+            ctx.arc(x, y, 22, 0, Math.PI * 2);
+            ctx.fill();
+
+            // 实心圆
+            ctx.fillStyle = fill;
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x, y, 9, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+
+            // 文字标签：背景圆角+文字
+            ctx.font = 'bold 18px "Microsoft YaHei", sans-serif';
+            const textW = ctx.measureText(label).width;
+            const padX = 10, padY = 6;
+            const bx = x + 14;
+            const by = y - 30;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+            ctx.strokeStyle = stroke;
+            ctx.lineWidth = 2;
+            roundRect(bx, by, textW + padX * 2, 28, 8, true, true);
+
+            ctx.fillStyle = stroke;
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = 'left';
+            ctx.fillText(label, bx + padX, by + 14);
+            ctx.textBaseline = 'alphabetic';
+            ctx.textAlign = 'start';
+        }
+
+        // 绘制圆角矩形（辅助函数）
+        function roundRect(x, y, w, h, r, fill, stroke) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+            if (fill) ctx.fill();
+            if (stroke) ctx.stroke();
+        }
+
+        // 绘制地图和点位
+        function drawMap() {
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // 保存当前绘图状态
+            ctx.save();
+
+            // 应用变换
+            ctx.translate(mapOffsetX, mapOffsetY);
+            ctx.scale(mapScale, mapScale);
+
+            // 绘制地图图片
+            ctx.drawImage(mapImage, 0, 0);
+
+            // 绘制所有点位
+            drawPoints();
+
+            // connectHelper.drawConnection();
+
+            // ===== 精美导航路径 =====
+            drawNavigationPath();
+
+            // 恢复绘图状态
+            ctx.restore();
+        }
+        
+        // 绘制所有点位
+        function drawPoints() {
+            points.forEach(point => {
+                drawPointMarker(point.location[0], point.location[1], point.name);
+            });
+            
+            // 绘制选中的点位
+            if (selectedPoint) {
+                drawPointMarker(selectedPoint.x, selectedPoint.y, "选中点");
+            }
+
+            buildingData.forEach((point, index) => {
+                drawPointMarker(point[0], point[1], "", "red");
+            });
+            crossingData.forEach((point, index) => {
+                drawPointMarker(point[0], point[1], "", "green");
+            });
+        }
+        
+        // 绘制单个点位标记
+        function drawPointMarker(x, y, name = '', col = "yellow") {
+            // 绘制圆形标记
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fillStyle = col;
+            ctx.fill();
+            
+            // 添加名称标签
+            if (name) {
+                ctx.font = "bold 20px Arial";
+                ctx.fillStyle = "red";
+                ctx.textAlign = "left";
+                ctx.fillText(name, x + 15, y + 5);
+            }
+        }
+        
+        // 添加新点位
+        function addPoint(x, y, name = '') {
+            points.push({
+                location: [x, y],
+                name: name
+            });
+            drawMap();
+        }
+        
+        let crossingData = [[1194.4460300664355,819.9743193899473],[1323.0074351789378,732.2886461683084],[1176.5574322920118,647.7351712833488],[1056.8221107335148,724.0440629889534],[1083.3767180468963,612.9877931660452],[951.9064563514261,576.939495604384],[1161.8347774458061,406.77032623242445],[1177.2083161118087,373.3726387855913],[1026.6536615895766,382.3847131760066],[930.0657475603856,699.8328089936058],[1468.5353899728218,1025.5768354330794],[1260.9396057794906,991.1719161426116],[1378.7327192824482,1081.5577210582476],[1337.3301892888344,1107.2156269697828],[1283.098706339453,1145.1193516118237],[1552.9642455237145,969.2736515216094],[1473.6579908880599,849.1480011176031],[1557.6293193258118,802.4972630966298],[1645.682587340399,754.6802566251321],[1789.133606754892,870.1408332270411],[1710.4104863444995,918.540973923801],[1814.2083784411652,891.1336653364791],[1789.716740980154,1010.6761815152232],[1680.670640856129,943.6157456100741],[1776.3046537991243,1063.1582617888182],[1760.5600297170458,1134.3006372708026],[1637.5187081867286,1211.2743550054086],[1583.8703594626093,1173.9537645886298],[1424.6747159660379,1054.411248409886],[1519.725594683771,1278.3347909105578],[1258.4814617663205,1236.932260916944],[1867.1152230681184,666.2922521998648],[1834.853852774945,643.191517915864],[1743.5740892713704,569.7072855814131],[1826.9478256105067,516.2131541730656],[1711.2848387816473,495.00827325444135],[1693.9353907573184,534.0445313091815],[1726.2246412470415,458.38166075863586],[1551.0612886825454,424.33442925493637],[1502.6611479857856,415.5874158760039],[1664.7724626086679,513.5539657200478],[1588.3818790993241,461.655019671715],[1376.7041553291576,770.1330248354012],[1584.8830737477513,784.1282462416932],[1099.3421924254608,877.7912655033024],[969.513188513092,870.7353413776302],[896.8371700186682,815.6991331973869],[920.7531487496103,1088.2605469142957],[842.8885619831558,1074.1392885180335],[882.8746589436078,1080.1473204409097],[926.0265916130081,972.850622992671],[619.8590867079978,1033.2905027847285],[465.14191406143976,1005.9648329889433],[309.27013564886266,978.3825841340428],[347.75699451616566,880.8825416702085],[452.9544087534605,614.6817678380295],[488.87547702960995,543.4810789335189],[336.8523845037631,515.8988300786185],[315.7878851980404,589.2765922997227],[260.6233874882394,740.6582371777811],[221.49508097314802,857.4017090752668],[184.29111740142181,954.9017515391012],[503.09059835224826,908.0760732505491],[548.6333813452235,794.5398395920053],[607.6465649417547,642.5167470661585],[667.0616870560989,815.4615823381633],[807.320052418624,560.0653526853318],[883.5240329758839,358.2659226911064],[530.0222342797058,464.8103769887569],[656.3232761292385,487.389334190908],[717.7098160225868,329.3366337758504],[592.1143665856214,306.05208416113203],[419.94981791921924,275.7116104207415],[1238.1339043100404,385.53405370758094],[1220.1428134765474,433.0160198742562],[1326.6053354440203,458.8649449610089],[1385.7511809815053,502.2385650218312],[1285.8604196293086,568.394288548944],[1429.4989532800241,663.2686059648134],[1454.9448103823731,680.7626327226784],[1550.8968965391477,618.2082340127369],[1454.4146883594076,555.6538353027954],[1685.5478903724118,725.2928826517893],[1620.8730035706078,675.4614124930223],[1413.1737766788835,393.3307984673148],[1289.5051905550513,367.3623868239207],[1278.114138821906,391.45884241326644],[391.2218296079722,768.3077958139291],[1163.5712459356307,923.5247308192951],[1189.2291518471661,880.3727981498947],[1240.5449636702367,855.8811606888837],[1348.4247953437375,936.3536837750627],[729.5011510921861,662.9729906735776],[1109.6463525405925,687.2896878670099],[1505.3125583748938,1119.1679342177],[1157.1530582874695,425.01083496924025],[1347.6287584012882,747.9392188607584],[1527.6870334894109,600.7317810785736],[1081.8302627398125,965.288857297965],[1013.6165824188129,1024.719877417301],[953.0767270538452,1033.4822249043357],[904.4855273530158,1024.321588895163],[856.6909046964622,1016.754106974542],[754.5456670106707,950.0947356625302],[891.6088025113299,1158.9132042342399],[816.3314752502139,1145.130031637134],[1298.2634127082113,808.779313997096],[981.756988604196,499.4073268672025],[1762.4535454828626,1065.3107322472026],[920.7531487496103,1088.2605469142957],[1088.0442788176288,1116.66454082542],[1289.9737685122716,892.6453128349752],[1405.9737685122716,978.6453128349752],[1301.3071018456048,965.6453128349752],[1402.9737685122716,902.9786461683085],[1252.6741018456044,779.9553128349752],[1069.8530685122707,659.1312795016416],[428.68406217893727,680.5762325016417],[410.68406217893727,727.5762325016417],[447.01739551227064,633.9095658349751]];
+        let buildingData = [[665.7481394857435,281.3526172336766],[577.1117372458942,255.69471132214125],[940.4080704383847,487.84680786328533],[1040.0710107559187,346.8343497544342],[1181.0182638559452,726.9710692504732],[1070.555147564533,816.5288235662366],[926.1579928695521,968.7017815879757],[856.7985794380181,1152.7511364173656],[1519.2332279935868,1160.640942485163],[1363.3614495810095,1146.5290942338183],[1537.6421923508883,1174.7889450584735],[1505.6228221637657,1060.8127101208681],[1710.791322192671,752.0515716040071],[1350.5102527051583,859.1857143628401],[1440.1490674975246,934.3666558015988],[1248.8232101181195,924.7280735658605],[1343.2813160283547,994.1258656631761],[1815.9340317514102,539.3404976852314],[1808.5017233276656,684.4649883134465],[1054.4962968997963,360.8920786089768],[1274.208903566463,438.2453619423102],[1711.6633856241408,438.89376276100194],[927.906980299484,610.9698357821599],[549.8197784748803,601.5109183548597],[525.1252918082137,651.9735650215263],[506.3360084748803,699.2151916881929],[490.767745141547,743.7726350215263],[458.02070847488034,821.0771150215263],[582.5968779948804,843.5227928915263],[545.3940969948803,979.9329898915262],[1444.657145517166,596.5958185078065],[1186.7779896238326,457.5674690844731],[1172.2833996238326,499.4407290844731],[1157.251972957166,538.6298057511398],[1153.4941162904993,585.3345957511398],[1274.8192029571658,528.9667457511398],[1325.2818496238326,495.68287241780644],[1389.165412957166,542.9244990844732],[1341.3869496238326,574.0610257511398],[1292.5348129571657,606.8080624178065],[1248.5142062904993,638.4814257511398],[1312.3977696238326,681.4283590844731],[1368.7656196238324,649.7549957511397],[1440.1648962904992,504.80909575113975],[1487.4065229571659,477.43042575113975],[1559.3426362904993,531.6509290844731],[1509.9536629571658,559.5664357511398],[1658.6574196238325,603.5870424178064],[1717.709452957166,650.8286690844731],[1606.584262957166,628.2815290844732],[1666.173132957166,678.7441757511398],[1558.268962957166,657.2707090844731],[1621.078852957166,705.5860090844732],[1499.7537662904992,686.7967257511398],[1571.6898796238324,741.5540657511398],[1449.8279562904993,714.1753957511398],[1520.6903962904992,767.8590624178065],[1406.881022957166,746.3855957511398],[1467.0067296238326,794.7008957511398],[1674.681457287166,839.4006008011397],[1581.8087139538327,866.7792708011398],[1442.5517239152377,1120.5827665863635],[1795.3871565708414,810.54408452241]];
+        let buildingName = ['校卫生所', '花房', '第二食堂', '北门', '教学E楼', '图书馆', '国旗', '正门', '体育馆', '体育馆副馆', '游泳馆', '体育场', '第一食堂', '教学A楼', '教学B楼', '教学C楼', '教学D楼', '大学生活动中心', '浴室', '保卫处', '教师公寓', '北侧门', '信息楼', '实验二楼', '实验三楼', '实验四楼', '实验五楼', '工训中心', '实验六楼', '实验七楼', '快递站', '学生公寓28', '学生公寓27', '学生公寓26', '学生公寓25', '学生公寓23', '学生公寓24', '学生公寓22', '学生公寓21', '学生公寓8', '学生公寓6', '学生公寓5', '学生公寓7', '学生公寓18', '学生公寓20', '学生公寓19', '学生公寓17', '学生公寓16', '学生公寓15', '学生公寓14', '学生公寓13', '学生公寓12', '学生公寓11', '学生公寓10', '学生公寓9', '学生公寓4', '学生公寓3', '学生公寓2', '学生公寓1', '篮球场', '排球场', '乒乓球馆', 'KFC'];
+        let roadData = [[67,8],[50,101],[101,49],[67,66],[4,2],[2,93],[93,3],[3,9],[9,92],[3,0],[0,90],[42,16],[16,15],[15,10],[10,28],[28,12],[12,13],[13,14],[88,11],[11,12],[28,94],[94,27],[27,26],[26,25],[25,24],[24,22],[22,21],[21,19],[19,18],[18,43],[43,17],[17,16],[18,82],[82,32],[32,31],[31,21],[26,29],[29,30],[30,14],[49,48],[48,51],[51,52],[52,53],[53,54],[54,87],[64,92],[64,63],[63,62],[62,52],[62,54],[57,56],[56,66],[71,70],[70,67],[32,33],[33,36],[36,35],[35,37],[36,40],[40,41],[41,38],[38,39],[84,39],[84,75],[2,77],[77,76],[75,76],[75,74],[95,74],[6,95],[8,6],[95,4],[76,81],[83,82],[61,53],[61,60],[60,59],[60,54],[72,71],[42,96],[96,79],[81,97],[97,78],[79,80],[97,80],[80,83],[80,36],[40,97],[9,46],[46,45],[45,44],[44,0],[48,105],[47,104],[23,22],[23,20],[20,19],[35,34],[34,33],[66,5],[5,4],[107,5],[107,8],[57,58],[58,59],[24,108],[108,27],[38,37],[39,76],[49,47],[47,110],[110,14],[90,111],[112,10],[111,91],[91,112],[11,113],[113,91],[91,114],[114,16],[2,1],[1,78],[1,96],[0,115],[115,1],[116,93],[116,4],[55,64],[56,55],[87,118],[118,117],[55,119],[119,117]];
+        let NavPathData = [], navDist = 0, pathData = [[102,101],[100,101],[100,47],[102,48],[102,103],[103,65],[65,63],[103,62],[100,99],[99,98],[98,88],[88,89],[89,90],[106,42],[106,90],[59,87],[58,55],[85,86],[-28,62],[-29,62],[118,-27],[117,-26],[119,-25],[-24,55],[-30,62],[-8,105],[-8,104],[-7,50],[-11,27],[-9,94],[-62,28],[-10,13],[-12,10],[-60,43],[-61,17],[-61,23],[-17,28],[-17,113],[113,-16],[-16,89],[106,-14],[-14,114],[114,-15],[-15,15],[-6,0],[-6,44],[-6,45],[-5,115],[-5,93],[116,-23],[5,-23],[4,-23],[66,-23],[9,-23],[-1,70],[-2,71],[-4,8],[-20,8],[-3,107],[-36,77],[-37,77],[-32,77],[-33,77],[-34,77],[-35,77],[-41,77],[-40,77],[-39,77],[-38,77],[-42,78],[-43,78],[-31,78],[-31,81],[-31,97],[-47,81],[-44,81],[-45,81],[-46,81],[-22,37],[-49,83],[-48,83],[-50,83],[-51,83],[-52,83],[-53,83],[-55,83],[-54,83],[-57,43],[-59,43],[-56,43],[-58,43],[-63,19],[-13,18],[-19,32],[-18,34],[-21,74],[-21,75],[73,-21],[7,6],[73,86],[70,69],[68,69]];
+        let navStartLabel = null, navEndLabel = null;
+
+        // 解析 start/end 参数
+        //   - 数字：直接作为 crossingData 的下标
+        //   - 字符串：在 buildingName 中查找，对应下标返回 -idx-1
+        function resolvePoint(arg) {
+            if (typeof arg === 'number') return arg;
+            if (typeof arg === 'string') {
+                const idx = buildingName.indexOf(arg);
+                return idx === -1 ? null : -idx - 1;
+            }
+            return null;
+        }
+
+        // 获取某个节点索引对应的坐标
+        function getNodeCoord(nodeIdx) {
+            return nodeIdx < 0 ? buildingData[-nodeIdx - 1] : crossingData[nodeIdx];
+        }
+
+        // 距离平方（与 connectHelper.dist 保持一致）
+        function navDist2(pt1, pt2) {
+            const dx = pt1[0] - pt2[0], dy = pt1[1] - pt2[1];
+            return dx * dx + dy * dy;
+        }
+
+        /**
+         * 路径规划函数
+         * @param {number|string} start - 起点：数字->crossingData下标；字符串->buildingName 中的建筑名
+         * @param {number|string} end   - 终点：同上
+         * @param {'bike'|'walk'} mode  - 模式：'bike' 只走 roadData；'walk' 可走 roadData+pathData
+         */
+        function planNavigation(start, end, mode) {
+            const sIdx = resolvePoint(start);
+            const eIdx = resolvePoint(end);
+            if (sIdx === null || eIdx === null || sIdx === undefined || eIdx === undefined) {
+                NavPathData = [];
+                navDist = 0;
+                navStartLabel = navEndLabel = null;
+                return;
+            }
+
+            // 构造图：节点集包含所有 crossing 和所有 building
+            // 使用 Set 避免重复边
+            const edgeMap = new Map(); // nodeIdx -> Map(neighborIdx -> dist2)
+            function addEdge(a, b, d) {
+                if (!edgeMap.has(a)) edgeMap.set(a, new Map());
+                if (!edgeMap.has(b)) edgeMap.set(b, new Map());
+                const ea = edgeMap.get(a), eb = edgeMap.get(b);
+                if (!ea.has(b) || ea.get(b) > d) ea.set(b, d);
+                if (!eb.has(a) || eb.get(a) > d) eb.set(a, d);
+            }
+
+            // 收集所有候选边
+            const edgeList = [];
+            roadData.forEach(e => edgeList.push(e));
+            if (mode === 'walk') {
+                pathData.forEach(e => edgeList.push(e));
+            }
+
+            // 登记 crossing 节点（保证它们都在图中，即使孤立）
+            for (let i = 0; i < crossingData.length; i++) {
+                if (!edgeMap.has(i)) edgeMap.set(i, new Map());
+            }
+
+            // 加入边
+            edgeList.forEach(([a, b]) => {
+                const pa = getNodeCoord(a), pb = getNodeCoord(b);
+                if (!pa || !pb) return;
+                addEdge(a, b, navDist2(pa, pb));
+            });
+
+            function connectPathForSpecBuilding(bIdx) {
+                pathData.forEach(e => {
+                    if(e[0] === bIdx || e[1] === bIdx)
+                        addEdge(e[0], e[1], navDist2(getNodeCoord(e[0]), getNodeCoord(e[1])));
+                });
+            }
+
+            // 确保建筑节点都在图中
+            for (let i = 0; i < buildingData.length; i++) {
+                const bIdx = -i - 1;
+                if (!edgeMap.has(bIdx)) edgeMap.set(bIdx, new Map());
+            }
+            if(mode === 'bike') {
+                if (sIdx < 0) connectPathForSpecBuilding(sIdx);
+                if (eIdx < 0) connectPathForSpecBuilding(eIdx);
+            }
+
+            // ====== Dijkstra ======
+            const dist = new Map();
+            const prev = new Map();
+            for (const k of edgeMap.keys()) { dist.set(k, Number.MAX_SAFE_INTEGER); prev.set(k, null); }
+            dist.set(sIdx, 0);
+
+            // 简单数组实现的优先队列（节点规模很小，足够用）
+            const visited = new Set();
+            const nodes = Array.from(edgeMap.keys());
+            while (nodes.length) {
+                // 取 dist 最小的节点
+                let bestI = 0;
+                for (let i = 1; i < nodes.length; i++) {
+                    if (dist.get(nodes[i]) < dist.get(nodes[bestI])) bestI = i;
+                }
+                const u = nodes[bestI];
+                nodes.splice(bestI, 1);
+                const du = dist.get(u);
+                if (du === Number.MAX_SAFE_INTEGER) break;
+                if (u === eIdx) break;
+                const neighbors = edgeMap.get(u);
+                if (!neighbors) continue;
+                for (const [v, w] of neighbors.entries()) {
+                    if (visited.has(v)) continue;
+                    const alt = du + w;
+                    if (alt < dist.get(v)) {
+                        dist.set(v, alt);
+                        prev.set(v, u);
+                    }
+                }
+                visited.add(u);
+            }
+
+            // 回溯路径
+            const path = [];
+            if (dist.get(eIdx) !== Number.MAX_SAFE_INTEGER) {
+                let cur = eIdx;
+                while (cur !== null && cur !== undefined) {
+                    path.push(cur);
+                    if (cur === sIdx) break;
+                    cur = prev.get(cur);
+                }
+                path.reverse();
+                if (path[0] !== sIdx) path.length = 0;
+            } else
+                alert('No path found!');
+
+            NavPathData = path;
+            navDist = (path.length >= 2 && dist.get(eIdx) !== Number.MAX_SAFE_INTEGER) ? dist.get(eIdx) : 0;
+
+            // 记录起/终点标签供绘图使用
+            navStartLabel = typeof start === 'string' ? start : null;
+            navEndLabel = typeof end === 'string' ? end : null;
+        }
+
+        let connectHelper = (() => {
+            function dist(pt1, pt2) { return (pt1[0]-pt2[0])*(pt1[0]-pt2[0])+(pt1[1]-pt2[1])*(pt1[1]-pt2[1]); }
+            function getClosetPoint(curpt) {
+                let minDist = Number.MAX_VALUE;
+                let minPoint = null;
+                let minPointIndex = -1;
+                for(let i = 0; i < crossingData.length; i++) {
+                    let pt = crossingData[i];
+                    let d = dist(pt, curpt);
+                    if(d < minDist) {
+                        minDist = d;
+                        minPoint = pt;
+                        minPointIndex = i;
+                    }
+                }
+                for(let i = 0; i < buildingData.length; i++) {
+                    let pt = buildingData[i];
+                    let d = dist(pt, curpt);
+                    if(d < minDist) {
+                        minDist = d;
+                        minPoint = pt;
+                        minPointIndex = i * -1 - 1;
+                    }
+                }
+                return minPointIndex;
+            }
+            function drawConnection() {
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = 'red';
+                ctx.beginPath();
+                roadData.forEach((conn) => {
+                    let startPt;
+                    if(conn[0] < 0)
+                        startPt = buildingData[-conn[0]-1];
+                    else
+                        startPt = crossingData[conn[0]];
+                    let endPt;
+                    if(conn[1] < 0)
+                        endPt = buildingData[-conn[1]-1];
+                    else
+                        endPt = crossingData[conn[1]];
+                    ctx.moveTo(startPt[0], startPt[1]);
+                    ctx.lineTo(endPt[0], endPt[1]);
+                });
+                ctx.stroke();
+                ctx.strokeStyle = 'yellow';
+                ctx.beginPath();
+                pathData.forEach((conn) => {
+                    let startPt;
+                    if(conn[0] < 0)
+                        startPt = buildingData[-conn[0]-1];
+                    else
+                        startPt = crossingData[conn[0]];
+                    let endPt;
+                    if(conn[1] < 0)
+                        endPt = buildingData[-conn[1]-1];
+                    else
+                        endPt = crossingData[conn[1]];
+                    ctx.moveTo(startPt[0], startPt[1]);
+                    ctx.lineTo(endPt[0], endPt[1]);
+                });
+                ctx.stroke();
+            }
+            let startPtIndex = -1000;
+            function getPt(curpoint) {
+                console.log("Got point:", curpoint);
+                if(startPtIndex === -1000)
+                    startPtIndex = getClosetPoint(curpoint);
+                else {
+                    let endPtIndex = getClosetPoint(curpoint);
+                    // pathData.push([startPtIndex, endPtIndex]);
+                    if(startPtIndex < 0) startPtIndex = buildingName[-startPtIndex - 1];
+                    if(endPtIndex < 0) endPtIndex = buildingName[-endPtIndex - 1];
+                    console.log("Planing from ", startPtIndex, " to ", endPtIndex);
+                    planNavigation(startPtIndex, endPtIndex, 'bike');
+                    startPtIndex = -1000;
+                }
+            }
+            return { getPt, drawConnection, getClosetPoint };
+        })();
+        // 地图点击事件处理
+        canvas.onclick = function(e) {
+            if(isDragging || mode === 'view') return;
+
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left - mapOffsetX) / mapScale;
+            const y = (e.clientY - rect.top - mapOffsetY) / mapScale;
+
+            // selectedPoint = { x, y };
+            // confirmBtn.classList.add("active");
+            // addPoint(x, y, "");
+            drawMap();
+        }
+        
+        // 地图拖动事件
+        canvas.onmousedown = function(e) {
+            if (e.button !== 0) {
+                isDragging = true;
+                dragged = false;
+                startX = e.clientX - mapOffsetX;
+                startY = e.clientY - mapOffsetY;
+                canvas.style.cursor = 'grabbing';
+            } else { const rect = canvas.getBoundingClientRect();
+                connectHelper.getPt([(e.clientX - rect.left - mapOffsetX) / mapScale, (e.clientY - rect.top - mapOffsetY) / mapScale]);
+            }
+        };
+        canvas.oncontextmenu = function(e) {
+            e.preventDefault();
+        }
+
+        var dragged = false;
+        var rafPending = false;
+        document.onmousemove = function(e) {
+            if (isDragging) {
+                mapOffsetX = e.clientX - startX;
+                mapOffsetY = e.clientY - startY;
+                if(mapOffsetX !== 0 || mapOffsetY !== 0)
+                    dragged = true;
+                if (!rafPending) {
+                    rafPending = true;
+                    requestAnimationFrame(function() {
+                        drawMap();
+                        rafPending = false;
+                    });
+                }
+            }
+        };
+        
+        document.onmouseup = function(e) {
+            if(e.button === 0) {
+                const rect = canvas.getBoundingClientRect();
+                connectHelper.getPt([(e.clientX - rect.left - mapOffsetX) / mapScale, (e.clientY - rect.top - mapOffsetY) / mapScale]);
+                return;
+            }
+            if (isDragging) {
+                if(!dragged) {
+                    isDragging = false;
+                    // const rect = canvas.getBoundingClientRect();
+                    // const x = (e.clientX - rect.left - mapOffsetX) / mapScale;
+                    // const y = (e.clientY - rect.top - mapOffsetY) / mapScale;
+                    // crossingData.push([x, y]);
+                }
+                else
+                    setTimeout(() => { isDragging = false; }, 10);
+                canvas.style.cursor = 'grab';
+            }
+        };
+        
+        // 鼠标滚轮缩放事件
+        canvas.onwheel = function(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            
+            // 计算鼠标在缩放前的地图坐标
+            const beforeX = (mouseX - mapOffsetX) / mapScale;
+            const beforeY = (mouseY - mapOffsetY) / mapScale;
+            
+            // 调整缩放比例
+            if (e.deltaY < 0) {
+                mapScale *= 1.1; // 放大
+            } else {
+                mapScale /= 1.1; // 缩小
+            }
+            
+            // 限制缩放范围
+            mapScale = Math.max(0.1, Math.min(mapScale, 3));
+            
+            // 重新计算偏移量，使鼠标位置保持不变
+            mapOffsetX = mouseX - beforeX * mapScale;
+            mapOffsetY = mouseY - beforeY * mapScale;
+            
+            drawMap();
+        };
+        
+        // 关闭按钮事件
+        closeBtn.onclick = function() {
+            if (window.opener) {
+                window.close();
+            } else if (window.parent) {
+                window.parent.postMessage({type: 'mapClosed'}, '*');
+            }
+        }
+        
+        // 确定按钮事件
+        confirmBtn.onclick = function() {
+            if (selectedPoint && (window.opener || window.parent)) {
+                const message = {
+                    type: 'pointSelected',
+                    location: [Math.round(selectedPoint.x), Math.round(selectedPoint.y)]
+                };
+                
+                if (window.opener) {
+                    window.opener.postMessage(message, '*');
+                    window.close();
+                } else if (window.parent) {
+                    window.parent.postMessage(message, '*');
+                }
+            }
+        }
+        
+        // 动画循环：驱动导航路径流动箭头
+        function animateLoop() {
+            navPathPhase = (navPathPhase + 0.6) % 40;
+            drawMap();
+            requestAnimationFrame(animateLoop);
+        }
+
+        // 页面加载完成后初始化
+        window.onload = function () {
+            init();
+            requestAnimationFrame(animateLoop);
+        };
+    </script>
+</body>
+</html>
