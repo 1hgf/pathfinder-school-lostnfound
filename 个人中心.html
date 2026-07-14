@@ -1467,24 +1467,6 @@
       } catch (error) {
         console.error('获取用户信息失败:', error);
         window.location.href = './login.html';
-        // 使用本地存储的用户信息作为备用
-        // const userInfo = localStorage.getItem('userInfo');
-        // if (userInfo) {
-        //   const data = JSON.parse(userInfo);
-        //   renderUserInfo({
-        //     username: data.name || data.username,
-        //     studentId: data.studentId || data.id,
-        //     email: data.email || '',
-        //     phone: data.phone || '',
-        //     role: data.role || 'USER'
-        //   });
-        //   populateEditForm({
-        //     username: data.name || data.username,
-        //     studentId: data.studentId || data.id,
-        //     email: data.email || '',
-        //     phone: data.phone || ''
-        //   });
-        // }
       }
     }
 
@@ -1585,7 +1567,7 @@
         const data = await response.json();
         if (data.code === 200 && data.data) {
           // 筛选当前用户发布的信息
-          let userPosts = data.data.list; // .filter(post => post.user && post.user.username === currentUserName)
+          let userPosts = data.data.list;
           userPosts.sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
           document.getElementById('MyPostCount').textContent = userPosts.length;
           renderMyPosts(userPosts, data.data.total);
@@ -1639,20 +1621,6 @@
 
       // 清空现有内容
       myPostsContainer.innerHTML = '';
-
-      // 分类图标映射
-      // const categoryIcons = {
-      //   '校园卡': 'fa-id-card',
-      //   '雨伞': 'fa-umbrella',
-      //   '手机': 'fa-mobile-alt',
-      //   '钥匙': 'fa-key',
-      //   '更多': 'fa-ellipsis-h',
-      //   'card': 'fa-id-card',
-      //   'umbrella': 'fa-umbrella',
-      //   'phone': 'fa-mobile-alt',
-      //   'key': 'fa-key',
-      //   'other': 'fa-ellipsis-h'
-      // };
 
       // 状态映射
       const statusMap = {
