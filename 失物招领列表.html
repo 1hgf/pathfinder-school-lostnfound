@@ -1303,22 +1303,7 @@
 </div>
 
 <script>
-  // 模拟数据
   let allItems = [];
-  // let allItems = [
-  //   { id: 1, title: '丢失校园卡', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"三楼电梯附近\"]', date: '2024-12-20', timeAgo: '2小时前', author: '李同学', phone: '13800138001', description: '', icon: 'fa-id-card' },
-  //   { id: 2, title: '黑色雨伞', type: 'found', category: '雨伞', location: '[\"教学A楼\",\"A401\"]', date: '2024-12-19', timeAgo: '昨天', author: '王同学', phone: '13800138002', description: '黑色折叠伞，伞柄有磨损', icon: 'fa-umbrella' },
-  //   { id: 3, title: '一串钥匙', type: 'lost', category: '钥匙', location: '[\"第一食堂\",\"4楼\"]', date: '2024-12-18', timeAgo: '2天前', author: '张同学', phone: '13800138003', description: '', icon: 'fa-key' },
-  //   { id: 4, title: '保温杯', type: 'found', category: '更多', location: '[\"体育馆\",\"乒乓房\"]', date: '2024-12-17', timeAgo: '3天前', author: '赵同学', phone: '13800138004', description: '银色不锈钢保温杯，约500ml', icon: 'fa-mug-hot' },
-  //   { id: 5, title: '白色手机', type: 'lost', category: '手机', location: '[\"大学生活动中心\",\"咖啡厅\"]', date: '2024-12-16', timeAgo: '4天前', author: '刘同学', phone: '13800138005', description: 'iPhone 14，白色，屏幕有保护膜', icon: 'fa-mobile-alt' },
-  //   { id: 6, title: '黑框眼镜', type: 'found', category: '更多', location: '[\"教学B楼\",\"1楼自习室\"]', date: '2024-12-15', timeAgo: '5天前', author: '陈同学', phone: '13800138006', description: '黑框近视眼镜，度数约300度', icon: 'fa-glasses' },
-  //   { id: 7, title: '蓝色钱包', type: 'found', category: '更多', location: '[\"体育场\",\"\"]', date: '2024-12-14', timeAgo: '6天前', author: '周同学', phone: '13800138007', description: '蓝色皮质钱包，内有少量现金', icon: 'fa-wallet' },
-  //   { id: 8, title: '学生证', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"4楼西南角落\"]', date: '2024-12-13', timeAgo: '1周前', author: '吴同学', phone: '13800138008', description: '', icon: 'fa-id-card' },
-  //   { id: 9, title: '蓝牙耳机', type: 'lost', category: '更多', location: '[\"信息楼\",\"216\"]', date: '2024-12-12', timeAgo: '1周前', author: '郑同学', phone: '13800138009', description: 'AirPods Pro，带充电盒', icon: 'fa-headphones' },
-  //   { id: 10, title: '红色水杯', type: 'found', category: '更多', location: '[\"信息楼\",\"实验室\"]', date: '2024-12-11', timeAgo: '8天前', author: '孙同学', phone: '13800138010', description: '红色塑料水杯，带吸管', icon: 'fa-tint' },
-  //   { id: 11, title: '笔记本电脑', type: 'lost', category: '更多', location: '[\"实验二楼\",\"\"]', date: '2024-12-10', timeAgo: '9天前', author: '钱同学', phone: '13800138011', description: 'MacBook Pro 14寸，深空灰色', icon: 'fa-laptop' },
-  //   { id: 12, title: '运动手环', type: 'found', category: '更多', location: '[\"体育馆\",\"\"]', date: '2024-12-09', timeAgo: '10天前', author: '冯同学', phone: '13800138012', description: '小米手环7，黑色表带', icon: 'fa-heart-pulse' },
-  // ];
   const Categories = {'校园卡': 'fa-id-card', '雨伞': 'fa-umbrella', '钥匙': 'fa-key', '手机': 'fa-mobile-alt', '杯子': 'fa-mug-hot', '更多': 'fa-ellipsis-h'};
   let constr = '<button class="category-tag active"><i class="fas fa-check-circle" style="font-size:12px;"></i> 全部</button>';
   let constr2 = '';
