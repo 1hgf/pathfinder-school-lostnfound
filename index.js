@@ -28,13 +28,7 @@ function renderUserInfo() {
                 <span>${username}</span>
             `;
             userInfoContainer.onclick = function() {
-                // 退出登录
                 window.location.href = './个人中心.html';
-                // if (confirm('确定退出登录吗？')) {
-                //     localStorage.removeItem('authToken');
-                //     localStorage.removeItem('userInfo');
-                //     renderUserInfo(); // 重新渲染登录状态
-                // }
             };
         } catch (e) {
             // 处理用户信息解析错误
@@ -183,13 +177,11 @@ if (heroCanvas) {
             flake.x += flake.speedX;
             flake.y += flake.speedY;
             // 绘制雪花
-            // ctx.save();
             ctx.beginPath();
             ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
             ctx.fillStyle = flake.color;
             ctx.globalAlpha = flake.opacity;
             ctx.fill();
-            // ctx.restore();
             // 当雪花落到画布外时，从顶部重新开始
             if (flake.y > heroCanvas.height) {
                 flake.y = 0;
@@ -808,8 +800,7 @@ snapContainer.addEventListener('scroll', () => {
     const scrollTop = snapContainer.scrollTop;
     const scrollHeight = snapContainer.scrollHeight;
     const clientHeight = snapContainer.clientHeight;
-    // console.log(scrollTop + clientHeight, scrollHeight);
-    // 距离底部 100px 时触发加载
+    // 距离底部 20px 时触发加载
     if (scrollTop + clientHeight >= scrollHeight - 20) {
         loadMoreData();
     }
