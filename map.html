@@ -193,7 +193,7 @@
         <div class="nav-controls">
             <div class="select-container">
                 <select class="nav-select" id="startSelect">
-                    <option value="">请选择起点</option>
+                    <option value="" id = "startOption">请选择起点</option>
                     <!-- 选项将通过JS动态添加 -->
                 </select>
             </div>
@@ -1001,6 +1001,7 @@
             }
 
             if(mode === "select") {
+                document.getElementById("startOption").innerHTML = "请选择点位";
                 startNavBtn.style.display = "none";
                 confirmBtn.style.display = "block";
                 endSelect.style.display = "none";
