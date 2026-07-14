@@ -1449,7 +1449,7 @@
     // 获取用户信息
     async function fetchUserInfo() {
       try {
-        const response = await fetch('http://localhost:8080/api/user/me', {
+        const response = await fetch('http://localhost:8080/api/user/profile', {
           method: 'GET',
           headers: getHeaders()
         });
@@ -1537,7 +1537,7 @@
     // 修改个人信息
     async function updateUserInfo(data) {
       try {
-        const response = await fetch('http://localhost:8080/api/user/me', {
+        const response = await fetch('http://localhost:8080/api/user/profile', {
           method: 'PUT',
           headers: getHeaders(),
           body: JSON.stringify(data)
@@ -1559,7 +1559,8 @@
     // 获取用户发布列表
     async function fetchMyPosts() {
       try {
-        const response = await fetch(`http://localhost:8080/api/lost-found/my?pageSize=100`, {
+        const myId = JSON.parse(localStorage.userInfo).id;
+        const response = await fetch(`http://localhost:8080/api/lostfound/list?pageNum=1&pageSize=100&userId=${myId}`, {
           method: 'GET',
           headers: getHeaders()
         });
@@ -1567,8 +1568,8 @@
         const data = await response.json();
         if (data.code === 200 && data.data) {
           // 筛选当前用户发布的信息
-          let userPosts = data.data.list;
-          userPosts.sort((a, b) => new Date(b.occurred_at) - new Date(a.occurred_at));
+          let userPosts = data.data.records;
+          userPosts.sort((a, b) => new Date(b.occurredAt) - new Date(a.occurredAt));
           document.getElementById('MyPostCount').textContent = userPosts.length;
           renderMyPosts(userPosts, data.data.total);
         }
@@ -1938,7 +1939,7 @@
         
         try {
           const config = statusConfig[selectedStatus];
-          const response = await fetch(`http://localhost:8080/api/lost-found/${currentPostData.id}/status`, {
+          const response = await fetch(`http://localhost:8080/api/lostfound/${currentPostData.id}/status`, {
             method: 'PUT',
             headers: getHeaders(),
             body: JSON.stringify({ status: config.apiValue })

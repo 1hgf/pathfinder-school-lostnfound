@@ -445,13 +445,13 @@ async function getNewData(pageCnt) {
     // 模拟加载时间
     await new Promise(resolve => setTimeout(resolve, 2000));
     try {
-        const response = await fetch(`http://localhost:8080/api/lost-found?page=${pageCnt}&pageSize=10`, {
+        const response = await fetch(`http://localhost:8080/api/lostfound/list?pageNum=${pageCnt}&pageSize=10`, {
             method: 'GET',
         });
         const data = await response.json();
         if (data.code === 200 && data.data) {
             total = data.data.total;
-            data.data.list.forEach(it => {
+            data.data.records.forEach(it => {
                 if(it.status !== 'OPEN')
                     return;
                 let displayLocation;
@@ -488,13 +488,13 @@ async function getNewData(pageCnt) {
 // 页面加载时初始化轮播
 document.addEventListener('DOMContentLoaded', async function() {
     try {
-        const response = await fetch(`http://localhost:8080/api/lost-found?page=1&pageSize=50&time=今天`, {
+        const response = await fetch(`http://localhost:8080/api/lostfound/list?pageNum=1&pageSize=50`, {
             method: 'GET',
         });
         const data = await response.json();
         if (data.code === 200 && data.data) {
             lostFoundData = [];
-            data.data.list.forEach(it => {
+            data.data.records.forEach(it => {
                 if(it.status !== 'OPEN')
                     return;
                 let displayLocation;

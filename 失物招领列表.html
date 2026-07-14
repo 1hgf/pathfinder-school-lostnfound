@@ -1340,10 +1340,10 @@
       }
       
       // 分页参数
-      params.append('page', page);
+      params.append('pageNum', page);
       params.append('pageSize', itemsPerPage);
-      
-      const url = `http://localhost:8080/api/lost-found?${params.toString()}`;
+
+      const url = `http://localhost:8080/api/lostfound/list?${params.toString()}`;
       console.log('请求URL:', url);
       const response = await fetch(url, {
         method: 'GET',
@@ -1356,8 +1356,8 @@
       
       if (result.code === 200) {
         const today = new Date();
-        const data = result.data.list;
-        
+        const data = result.data.records;
+
         // 清空现有数据
         allItems = [];
         
@@ -1506,10 +1506,10 @@
     try {
       const params = new URLSearchParams();
       // 分页参数
-      params.append('page', 1);
+      params.append('pageNum', 1);
       params.append('pageSize', 500);
-      
-      const url = `http://localhost:8080/api/lost-found?${params.toString()}`;
+
+      const url = `http://localhost:8080/api/lostfound/list?${params.toString()}`;
       console.log('请求URL:', url);
       const response = await fetch(url, {
         method: 'GET',
@@ -1522,8 +1522,8 @@
       
       if (result.code === 200) {
         const today = new Date();
-        const data = result.data.list;
-        
+        const data = result.data.records;
+
         data.forEach(item => {
           const category = item.category || '更多';
           if(item.status === 'OPEN') {
@@ -1797,7 +1797,7 @@
       const token = window.localStorage.getItem('authToken');
       
       // 发送POST请求
-      const response = await fetch('http://localhost:8080/api/lost-found', {
+      const response = await fetch('http://localhost:8080/api/lostfound/publish', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

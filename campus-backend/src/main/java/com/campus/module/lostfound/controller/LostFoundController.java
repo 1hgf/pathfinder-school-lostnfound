@@ -58,6 +58,16 @@ public class LostFoundController {
     }
 
     /**
+     * 更新状态（仅发布者本人）
+     */
+    @PutMapping("/{id}/status")
+    public Result<Void> updateStatus(@PathVariable Long id, @RequestBody UpdateStatusRequest request) {
+        Long userId = LoginUserHolder.get().getUserId();
+        lostFoundService.updateStatus(id, userId, request.getStatus());
+        return Result.success();
+    }
+
+    /**
      * 删除失物招领
      */
     @DeleteMapping("/{id}")

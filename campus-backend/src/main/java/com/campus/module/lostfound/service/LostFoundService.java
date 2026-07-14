@@ -130,6 +130,21 @@ public class LostFoundService {
     }
 
     /**
+     * 更新状态（仅发布者本人，只改 status 字段）
+     */
+    public void updateStatus(Long id, Long userId, String status) {
+        LostFound lostFound = lostFoundMapper.selectById(id);
+        if (lostFound == null) {
+            throw new BusinessException("失物招领信息不存在");
+        }
+        if (!lostFound.getUserId().equals(userId)) {
+            throw new BusinessException("无权修改此信息");
+        }
+        lostFound.setStatus(status);
+        lostFoundMapper.updateById(lostFound);
+    }
+
+    /**
      * 删除失物招领（软删除）
      */
     public void delete(Long id, Long userId) {

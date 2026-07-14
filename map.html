@@ -945,13 +945,8 @@
         // 页面加载完成后初始化
         window.onload = async function () {
             try {
-                response = await fetch('http://localhost:8080/api/navigation/points', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                });
-                data = (await response.json()).data;
+                response = await fetch('./buildinglist.json');
+                data = await response.json();
                 data.forEach(item => {
                     if(item.type !== "CROSSROAD") {
                         buildingName.push(item.name);
@@ -960,13 +955,8 @@
                         crossingData.push([item.x,item.y]);
                     }
                 });
-                response = await fetch('http://localhost:8080/api/navigation/connections', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                });
-                data = (await response.json()).data;
+                response = await fetch('./connectionlist.json');
+                data = await response.json();
                 data.forEach(item => {
                     if(item.type === "BOTH") {
                         roadData.push([item.from,item.to]);
