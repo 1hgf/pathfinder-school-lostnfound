@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "studentId": "25010000",
+        "username": "张三",
+        "password": "123456",
+        "email": "",
+        "phone": "13800138000",
+        "role": "USER",
+        "avatarUrl": "",
+        "createdAt": "2026-07-13T08:00:00",
+        "isBanned": false
+    },
+    {
+        "id": 2,
+        "studentId": "admin",
+        "username": "管理员",
+        "password": "admin",
+        "email": "",
+        "phone": "",
+        "role": "ADMIN",
+        "avatarUrl": "",
+        "createdAt": "2026-07-12T08:00:00",
+        "isBanned": false
+    }
+]

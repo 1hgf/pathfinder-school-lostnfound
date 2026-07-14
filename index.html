@@ -5,349 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>首页 - 校园寻路与失物招领系统</title>
     <style>
-        @font-face {
-            font-family: 'emoji';
-            src: url('./seguiemj.ttf');
-        }
-        @font-face {
-            font-family: 'art';
-            src: url('./小米兰亭.ttf');
-        }
-        .snap_container {
-            overflow-y: auto;
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-            width: 100%;
-            height: 100vh;
-            scroll-padding: 0 20px;
-        }
-        /* 新增：全屏展示区域样式 */
-        .hero-section {
-            position: relative;
-            height: 100vh;
-            overflow: hidden;
-            scroll-snap-align: start;
-        }
-        .content-section {
-            height: 100vh;
-        }
-        
-        .hero-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('./background.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-        
-        .hero-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.6); /* 白色半透明 */
-        }
-        
-        .hero-title {
-            color: transparent;
-            background-image: linear-gradient(135deg, #237ff7, #0d47a1);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            transform: translate(-50%, -50%);
-            font-family: "art","华文宋体", "STSong", serif;
-            font-weight: bolder;
-            font-size: 80px;
-            text-align: center;
-            z-index: 10;
-            display: none;
-        }
-        
-        /* 全局样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, emoji;
-        }
-        
-        body {
-            background-color: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        /* 导航栏样式 - 修改：增加z-index确保在canvas上方 */
-        .navbar {
-            background: linear-gradient(135deg, #1a73e8, #0d47a1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-            z-index: 20;
-        }
-        
-        .navbar-title {
-            display: flex;
-            align-items: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        
-        .navbar-title span {
-            margin-left: 8px;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background-color: #e0e0e0;
-            margin-right: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #1a73e8;
-        }
-        
-        /* 新增：登录按钮样式 */
-        .login-btn {
-            background-color: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 20px;
-            padding: 6px 16px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .login-btn:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* 主容器样式 */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            scroll-snap-align: start;
-        }
-        
-        /* 功能卡片区域 */
-        .features {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-        
-        .feature-card {
-            background: white;
-            border-radius: 15px;
-            width: 280px;
-            height: 220px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #1a73e8, #4285f4);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            color: #1a73e8;
-        }
-        
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .feature-desc {
-            text-align: center;
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        /* 最新失物招领区域 */
-        .lost-found-section {
-            margin: 40px 0;
-        }
-        
-        .section-title {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .section-title span {
-            margin-left: 8px;
-        }
-        
-        .lost-found-list {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-        
-        .lost-item {
-            padding: 15px 20px;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            transition: background-color 0.2s ease;
-        }
-        
-        .lost-item:last-child {
-            border-bottom: none;
-        }
-        
-        .lost-item:hover {
-            background-color: #f9f9f9;
-        }
-        
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-        
-        .status-lost {
-            background-color: #e53935;
-        }
-        
-        .status-found {
-            background-color: #43a047;
-        }
-        
-        .item-details {
-            flex: 1;
-        }
-        
-        .item-type {
-            font-weight: 600;
-            margin-right: 10px;
-        }
-        
-        .item-location {
-            color: #666;
-            font-size: 0.9rem;
-        }
-        
-        .item-description {
-            margin-top: 5px;
-            font-size: 0.9rem;
-        }
-        
-        .item-date {
-            color: #999;
-            font-size: 0.8rem;
-            white-space: nowrap;
-        }
-        
-        .view-more {
-            text-align: right;
-            margin-top: 15px;
-        }
-        
-        .view-more a {
-            color: #1a73e8;
-            text-decoration: none;
-            font-weight: 500;
-            display: inline-flex;
-            align-items: center;
-            transition: color 0.2s ease;
-        }
-        
-        .view-more a:hover {
-            color: #0d47a1;
-        }
-        
-        .view-more a span {
-            margin-left: 5px;
-        }
-        
-        /* 响应式设计 */
-        @media (max-width: 768px) {
-            .features {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .feature-card {
-                width: 100%;
-                max-width: 350px;
-            }
-            
-            .lost-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            .item-date {
-                margin-top: 5px;
-                white-space: normal;
-            }
-        }
+        @import url('index.css');
     </style>
 </head>
 <body>
     <div class="snap_container">
-        <!-- 新增：全屏展示区域 -->
+        <!-- 全屏展示区域 -->
         <div class="hero-section">
             <div class="hero-background"></div>
             <canvas class="hero-canvas" id="heroCanvas"></canvas>
-            <div class="hero-title">校园寻路与失物招领系统</div>
         </div>
-        
         <section class="content-section">
+            <canvas class="bg-curve-canvas" id="bgCurveCanvas"></canvas>
             <!-- 导航栏 -->
             <nav class="navbar">
                 <div class="navbar-title">
@@ -357,7 +26,6 @@
                     <!-- 用户信息将通过JavaScript动态生成 -->
                 </div>
             </nav>
-            
             <!-- 主内容区 -->
             <div class="container">
                 <!-- 功能卡片 -->
@@ -367,296 +35,41 @@
                         <h3 class="feature-title">校园寻路</h3>
                         <p class="feature-desc">快速找到校内目的地</p>
                     </div>
-                    
                     <div class="feature-card" onclick="window.location.href='./失物招领列表.html'">
                         <div class="feature-icon">📦</div>
                         <h3 class="feature-title">失物招领</h3>
                         <p class="feature-desc">发布/查找失物信息</p>
                     </div>
                 </div>
-                
                 <!-- 最新失物招领 -->
                 <div class="lost-found-section">
                     <h3 class="section-title">📢 <span>最新失物招领</span></h3>
-                    
-                    <div class="lost-found-list">
-                        <div class="lost-item">
-                            <div class="status-indicator status-lost"></div>
-                            <div class="item-details">
-                                <div>
-                                    <span class="item-type">丢失 | 校园卡</span>
-                                    <span class="item-location">图书馆</span>
-                                </div>
-                                <p class="item-description">丢失一张校园卡</p>
-                            </div>
-                            <div class="item-date">12-20</div>
+                    <div class="carousel-wrapper" id="carouselWrapper">
+                        <button class="carousel-btn prev" id="carouselPrev">◀</button>
+                        <div class="carousel-track" id="carouselTrack">
+                            <!-- 由JS动态生成 -->
                         </div>
-                        
-                        <div class="lost-item">
-                            <div class="status-indicator status-found"></div>
-                            <div class="item-details">
-                                <div>
-                                    <span class="item-type">捡到 | 雨伞</span>
-                                    <span class="item-location">教学楼A</span>
-                                </div>
-                                <p class="item-description">捡到一把黑色雨伞</p>
-                            </div>
-                            <div class="item-date">12-19</div>
-                        </div>
-                        
-                        <div class="lost-item">
-                            <div class="status-indicator status-lost"></div>
-                            <div class="item-details">
-                                <div>
-                                    <span class="item-type">丢失 | 钥匙</span>
-                                    <span class="item-location">第一食堂</span>
-                                </div>
-                                <p class="item-description">丢失一串钥匙</p>
-                            </div>
-                            <div class="item-date">12-18</div>
-                        </div>
+                        <button class="carousel-btn next" id="carouselNext">▶</button>
                     </div>
-                    
-                    <div class="view-more">
-                        <a href="#">查看更多 <span>→</span></a>
+                    <div class="carousel-dots" id="carouselDots">
+                        <!-- 由JS动态生成 -->
                     </div>
                 </div>
             </div>
+            <h5 class="infoh5">下拉查看更多</h5>
+        </section>
+        <section id="flow-section">
+            <div class="waterflow-section">
+                <div class="wf-column" id="wfCol0"></div>
+                <div class="wf-column" id="wfCol1"></div>
+                <div class="wf-column" id="wfCol2"></div>
+            </div>
+            <div class="loading-container"></div>
         </section>
     </div>
-
+    <script src="index.js"></script>
     <script>
-        // 处理用户登录状态显示
-        function renderUserInfo() {
-            const userInfoContainer = document.getElementById('userInfoContainer');
-            const authToken = localStorage.getItem('authToken');
-            
-            if (authToken) {
-                // 已登录状态
-                try {
-                    const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-                    const username = userInfo.username || '用户';
-                    const avatarText = username.charAt(0);
-                    
-                    userInfoContainer.innerHTML = `
-                        <div class="avatar">${avatarText}</div>
-                        <span>${username}</span>
-                    `;
-                    userInfoContainer.onclick = function() {
-                        // 退出登录
-                        if (confirm('确定退出登录吗？')) {
-                            localStorage.removeItem('authToken');
-                            localStorage.removeItem('userInfo');
-                            renderUserInfo(); // 重新渲染登录状态
-                        }
-                    };
-                } catch (e) {
-                    // 处理用户信息解析错误
-                    localStorage.removeItem('authToken');
-                    localStorage.removeItem('userInfo');
-                    renderUserInfo(); // 重新渲染登录状态
-                }
-            } else {
-                // 未登录状态
-                userInfoContainer.innerHTML = `
-                    <button class="login-btn">登录/注册</button>
-                `;
-                userInfoContainer.onclick = function() {
-                    window.location.href = './login.html';
-                };
-            }
-        }
         
-        // 在页面加载时渲染用户信息
-        document.addEventListener('DOMContentLoaded', renderUserInfo);
-
-        const snap_container = document.querySelector('.snap_container');
-        // 新增：初始化hero区域的canvas
-        const heroCanvas = document.getElementById('heroCanvas');
-        if (heroCanvas) {
-            const ctx = heroCanvas.getContext('2d');
-            let snowflakes = [];
-            let isSnowing = false;
-            let hoverTimer = null;
-            const hoverDelay = 1000; // 1秒后触发雪花效果
-            
-            // 设置canvas尺寸为窗口大小
-            function resizeCanvas() {
-                heroCanvas.width = window.innerWidth;
-                heroCanvas.height = window.innerHeight;
-                // 重新绘制文字
-                drawText();
-            }
-            
-            // 绘制标题文字
-            function drawText() {
-                ctx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
-                
-                // 设置文字样式
-                ctx.font = 'bold 80px "art"';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                // 创建渐变
-                const gradient = ctx.createLinearGradient(
-                    heroCanvas.width / 2 - 200, 
-                    heroCanvas.height / 2, 
-                    heroCanvas.width / 2 + 200, 
-                    heroCanvas.height / 2
-                );
-                gradient.addColorStop(0, '#237ff7');
-                gradient.addColorStop(1, '#0d47a1');
-                ctx.fillStyle = gradient;
-                
-                // 绘制文字
-                const text = '校园寻路与失物招领系统';
-                ctx.fillText(text, heroCanvas.width / 2, heroCanvas.height / 2);
-            }
-            
-            // 创建雪花粒子
-            function createSnowflakes() {
-                const imageData = ctx.getImageData(0, 0, heroCanvas.width, heroCanvas.height);
-                const pixels = imageData.data;
-                snowflakes = [];
-                
-                // 每隔一定像素采样一个点作为雪花
-                const sampleRate = 6;
-                for (let y = 0; y < heroCanvas.height; y += sampleRate) {
-                    for (let x = 0; x < heroCanvas.width; x += sampleRate) {
-                        const index = (y * heroCanvas.width + x) * 4;
-                        const alpha = pixels[index + 3];
-                        
-                        // 如果该像素有颜色（透明度不为0）
-                        if (alpha > 100) {
-                            const r = pixels[index];
-                            const g = pixels[index + 1];
-                            const b = pixels[index + 2];
-                            
-                            snowflakes.push({
-                                x: x,
-                                y: y,
-                                size: Math.random() * 6 + 0.5,  
-                                speedX: Math.random() * 1.7 - 1, // 左右浮动
-                                speedY: Math.random() * 2.5 + 0.7, // 向下飘落
-                                color: `rgb(${r}, ${g}, ${b})`,
-                                opacity: alpha / 255
-                            });
-                        }
-                    }
-                }
-                
-                // 清除画布
-                ctx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
-                isSnowing = true;
-                animateSnowflakes();
-            }
-            
-            // 雪花动画
-            function animateSnowflakes() {
-                if (!isSnowing) return;
-                
-                ctx.clearRect(0, 0, heroCanvas.width, heroCanvas.height);
-                
-                snowflakes.forEach((flake) => {
-                    // 更新雪花位置
-                    flake.x += flake.speedX;
-                    flake.y += flake.speedY;
-                    
-                    // 绘制雪花
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.arc(flake.x, flake.y, flake.size, 0, Math.PI * 2);
-                    ctx.fillStyle = flake.color;
-                    ctx.globalAlpha = flake.opacity;
-                    ctx.fill();
-                    ctx.restore();
-                    
-                    // 当雪花落到画布外时，从顶部重新开始
-                    if (flake.y > heroCanvas.height) {
-                        flake.y = -10;
-                        if(flake.size < 0.25) {
-                            flake.color = 'rgba(0, 0, 0, 0.0)';
-                        } else
-                            flake.size /= 1.2;
-                    }
-                    if (flake.x < 0) {
-                        flake.x = heroCanvas.width;
-                    } else if (flake.x > heroCanvas.width) {
-                        flake.x = 0;
-                    }
-                });
-                
-                requestAnimationFrame(animateSnowflakes);
-            }
-            
-            // 监听鼠标悬停
-            heroCanvas.addEventListener('mousemove', (e) => {
-                // 检查鼠标是否在标题区域
-                const rect = heroCanvas.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                // 标题文字大致区域
-                const textWidth = ctx.measureText('校园寻路与失物招领系统').width; // 估算的文字宽度
-                const textHeight = 100; // 估算的文字高度
-                const textX = heroCanvas.width / 2 - textWidth / 2;
-                const textY = heroCanvas.height / 2 - textHeight / 2;
-                
-                const isOverTitle = x > textX && x < textX + textWidth && y > textY && y < textY + textHeight;
-                
-                if (isOverTitle && !isSnowing) {
-                    // 鼠标在标题上，启动计时器
-                    if (!hoverTimer) {
-                        hoverTimer = setTimeout(() => {
-                            createSnowflakes();
-                        }, hoverDelay);
-                    }
-                } else {
-                    // 鼠标不在标题上，清除计时器
-                    if (hoverTimer) {
-                        clearTimeout(hoverTimer);
-                        hoverTimer = null;
-                    }
-                }
-            });
-            
-            // 初始设置尺寸
-            resizeCanvas();
-            
-            // 监听窗口大小变化
-            window.addEventListener('resize', resizeCanvas);
-        }
-        
-        // 简单的交互效果
-        document.addEventListener('DOMContentLoaded', function() {
-            // 为卡片添加悬停动画效果
-            const cards = document.querySelectorAll('.feature-card');
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-5px)';
-                    this.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.1)';
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0)';
-                    this.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.05)';
-                });
-            });
-        });
-
-        const savedScrollTop = window.sessionStorage.getItem('scrollTop');
-        if (savedScrollTop) {
-            snap_container.scrollTo({top: savedScrollTop, behavior: "instant"});
-        }
-        let lastScrollTop = 0;
-        setInterval(() => {
-            const scrollTop = snap_container.scrollTop;
-            if (scrollTop !== lastScrollTop) {
-                lastScrollTop = scrollTop;
-                // 滚动位置改变时执行的操作
-                window.sessionStorage.setItem('scrollTop', scrollTop);
-            }
-        }, 200);
     </script>
 </body>
 </html>

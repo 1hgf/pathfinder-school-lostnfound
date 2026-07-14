@@ -107,8 +107,6 @@
 
         .logout-btn {
             padding: 8px 16px;
-            background-color: #e53e3e;
-            color: #fff;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -117,7 +115,7 @@
         }
 
         .logout-btn:hover {
-            background-color: #c53030;
+            background-color: #cfcfcf;
         }
 
         .dashboard {
@@ -463,7 +461,7 @@
                 <h1>校园助手管理后台</h1>
                 <div class="top-nav-right">
                     <span class="admin-info">[管理员] <span id="adminName">admin</span></span>
-                    <button class="logout-btn" onclick="logout()">退出登录</button>
+                    <button class="logout-btn" onclick="window.location.href = './个人中心.html'">返回</button>
                 </div>
             </header>
 
@@ -477,7 +475,7 @@
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="todayNewUsers"><div class="loading"></div></div>
-                            <div class="stat-label">今日新增</div>
+                            <div class="stat-label">今日新增用户</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-value" id="totalPosts"><div class="loading"></div></div>
@@ -490,7 +488,7 @@
                     </div>
                     <div class="charts-grid">
                         <div class="chart-card">
-                            <div class="chart-title">近7天趋势</div>
+                            <div class="chart-title">近7天发布趋势</div>
                             <div class="chart-container">
                                 <canvas id="trendChart"></canvas>
                             </div>
@@ -602,7 +600,7 @@
 
     <script>
         const API_BASE = 'http://localhost:8080/api';
-        const token = localStorage.getItem('token') || '';
+        const token = localStorage.getItem('authToken') || '';
 
         let trendChart = null;
         let categoryChart = null;
@@ -717,13 +715,15 @@
         }
 
         function loadTrendChart(weeklyTrend) {
-            let labels, values;
+            let labels, values, usercnts;
             if (weeklyTrend && weeklyTrend.length > 0) {
                 labels = weeklyTrend.map(item => item.date);
                 values = weeklyTrend.map(item => (item.lost || 0) + (item.found || 0));
+                usercnts = weeklyTrend.map(item => item.user || 0);
             } else {
                 labels = ['周一','周二','周三','周四','周五','周六','周日'];
                 values = [0, 0, 0, 0, 0, 0, 0];
+                usercnts = [0, 0, 0, 0, 0, 0, 0];
             }
             const ctx = document.getElementById('trendChart').getContext('2d');
             if (trendChart) trendChart.destroy();
@@ -738,6 +738,16 @@
                         backgroundColor: 'rgba(66, 153, 225, 0.1)',
                         fill: true, tension: 0.4,
                         pointBackgroundColor: '#4299e1',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7
+                    },
+                    {
+                        label: '用户注册数量',
+                        data: usercnts,
+                        borderColor: '#38a169',
+                        backgroundColor: 'rgba(56, 161, 105, 0.1)',
+                        fill: true, tension: 0.4,
+                        pointBackgroundColor: '#38a169',
                         pointBorderColor: '#fff',
                         pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7
                     }]
@@ -903,6 +913,7 @@
                     await apiFetch(`${API_BASE}/admin/lost-found/${id}`, { method: 'DELETE' });
                     showToast('删除成功', 'success');
                     loadContent();
+                    loadDashboard()
                 } catch (e) {
                     showToast('删除失败: ' + e.message);
                 }

@@ -1124,14 +1124,7 @@
       <!-- 分类 -->
       <div class="filter-section">
         <div class="filter-section-title"><i class="fas fa-tag"></i> 分类</div>
-        <div class="filter-group">
-          <button class="category-tag active"><i class="fas fa-check-circle" style="font-size:12px;"></i> 全部</button>
-          <button class="category-tag"><i class="fas fa-id-card"></i> 校园卡</button>
-          <button class="category-tag"><i class="fas fa-umbrella"></i> 雨伞</button>
-          <button class="category-tag"><i class="fas fa-mobile-alt"></i> 手机</button>
-          <button class="category-tag"><i class="fas fa-key"></i> 钥匙</button>
-          <button class="category-tag"><i class="fas fa-ellipsis-h"></i> 更多</button>
-        </div>
+        <div class="filter-group" id = "category-filter"></div>
       </div>
 
       <div class="filter-divider"></div>
@@ -1151,137 +1144,13 @@
     <div class="list-area">
       <!-- 卡片网格 -->
       <div class="item-grid">
-        <!-- 卡片 1 丢失校园卡 -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-id-card"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                丢失校园卡
-                <span class="badge lost"><i class="fas fa-circle" style="font-size: 8px;"></i> 丢失</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 图书馆三楼</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-20</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 2小时前</span>
-            <span><i class="far fa-user-circle"></i> 李同学</span>
-          </div>
-        </div>
-
-        <!-- 卡片 2 捡到雨伞 -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-umbrella"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                黑色雨伞
-                <span class="badge found"><i class="fas fa-circle" style="font-size: 8px;"></i> 捡到</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 教学楼A</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-19</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 昨天</span>
-            <span><i class="far fa-user-circle"></i> 王同学</span>
-          </div>
-        </div>
-
-        <!-- 卡片 3 丢失钥匙 -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-key"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                一串钥匙
-                <span class="badge lost"><i class="fas fa-circle" style="font-size: 8px;"></i> 丢失</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 第一食堂</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-18</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 2天前</span>
-            <span><i class="far fa-user-circle"></i> 张同学</span>
-          </div>
-        </div>
-
-        <!-- 卡片 4 捡到保温杯 -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-mug-hot"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                保温杯
-                <span class="badge found"><i class="fas fa-circle" style="font-size: 8px;"></i> 捡到</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 体育馆</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-17</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 3天前</span>
-            <span><i class="far fa-user-circle"></i> 赵同学</span>
-          </div>
-        </div>
-
-        <!-- 卡片 5 丢失手机 (额外) -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-mobile-alt"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                白色手机
-                <span class="badge lost"><i class="fas fa-circle" style="font-size: 8px;"></i> 丢失</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 咖啡厅</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-16</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 4天前</span>
-            <span><i class="far fa-user-circle"></i> 刘同学</span>
-          </div>
-        </div>
-
-        <!-- 卡片 6 捡到眼镜 -->
-        <div class="item-card">
-          <div class="card-top">
-            <div class="card-img"><i class="fas fa-glasses"></i></div>
-            <div class="card-content">
-              <div class="card-title">
-                黑框眼镜
-                <span class="badge found"><i class="fas fa-circle" style="font-size: 8px;"></i> 捡到</span>
-              </div>
-              <div class="card-meta">
-                <span><i class="fas fa-map-pin"></i> 自习室B</span>
-                <span><i class="far fa-calendar-alt"></i> 2024-12-15</span>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <span><i class="far fa-clock"></i> 5天前</span>
-            <span><i class="far fa-user-circle"></i> 陈同学</span>
-          </div>
-        </div>
+        <div style="text-align: center; padding: 40px; color: #94a3b8;">正在查找记录...</div>
       </div>
 
       <!-- 分页 -->
       <div class="pagination">
         <button><i class="fas fa-chevron-left"></i> 上一页</button>
-        <span class="page-info">第1页 / 共6页</span>
+        <span class="page-info">第1页 / 共1页</span>
         <button>下一页 <i class="fas fa-chevron-right"></i></button>
       </div>
     </div>
@@ -1319,13 +1188,7 @@
       <!-- 分类选择 -->
       <div class="form-group">
         <label><i class="fas fa-folder-open"></i> 物品分类 <span style="color:#dc2626;">*</span></label>
-        <div class="category-options">
-          <button class="category-option" data-category="校园卡" data-icon="fa-id-card"><i class="fas fa-id-card"></i> 校园卡</button>
-          <button class="category-option" data-category="雨伞" data-icon="fa-umbrella"><i class="fas fa-umbrella"></i> 雨伞</button>
-          <button class="category-option" data-category="手机" data-icon="fa-mobile-alt"><i class="fas fa-mobile-alt"></i> 手机</button>
-          <button class="category-option" data-category="钥匙" data-icon="fa-key"><i class="fas fa-key"></i> 钥匙</button>
-          <button class="category-option" data-category="更多" data-icon="fa-ellipsis-h"><i class="fas fa-ellipsis-h"></i> 更多</button>
-        </div>
+        <div class="category-options" id = 'category-options'></div>
       </div>
 
       <!-- 地点 -->
@@ -1358,10 +1221,10 @@
         <input type="text" class="form-input" id="item-author" placeholder="请输入您的称呼">
       </div>
 
-      <!-- 联系电话 -->
+      <!-- 联系方式 -->
       <div class="form-group">
-        <label><i class="fas fa-phone"></i> 联系电话 <span style="color:#dc2626;">*</span></label>
-        <input type="tel" class="form-input" id="item-phone" placeholder="请输入联系电话">
+        <label><i class="fas fa-phone"></i> 联系方式 <span style="color:#dc2626;">*</span></label>
+        <input type="tel" class="form-input" id="item-phone" placeholder="请输入联系方式">
       </div>
     </div>
     <div class="modal-footer">
@@ -1419,7 +1282,7 @@
         <div class="detail-info-item" id="detail-phone-item">
           <div class="icon-wrapper"><i class="fas fa-phone"></i></div>
           <div class="info-content">
-            <div class="info-label">联系电话</div>
+            <div class="info-label">联系方式</div>
             <div class="info-value" id="detail-phone">无</div>
           </div>
         </div>
@@ -1441,22 +1304,131 @@
 
 <script>
   // 模拟数据
-  const allItems = [
-    { id: 1, title: '丢失校园卡', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"三楼电梯附近\"]', date: '2024-12-20', timeAgo: '2小时前', author: '李同学', phone: '13800138001', description: '', icon: 'fa-id-card' },
-    { id: 2, title: '黑色雨伞', type: 'found', category: '雨伞', location: '[\"教学A楼\",\"A401\"]', date: '2024-12-19', timeAgo: '昨天', author: '王同学', phone: '13800138002', description: '黑色折叠伞，伞柄有磨损', icon: 'fa-umbrella' },
-    { id: 3, title: '一串钥匙', type: 'lost', category: '钥匙', location: '[\"第一食堂\",\"4楼\"]', date: '2024-12-18', timeAgo: '2天前', author: '张同学', phone: '13800138003', description: '', icon: 'fa-key' },
-    { id: 4, title: '保温杯', type: 'found', category: '更多', location: '[\"体育馆\",\"乒乓房\"]', date: '2024-12-17', timeAgo: '3天前', author: '赵同学', phone: '13800138004', description: '银色不锈钢保温杯，约500ml', icon: 'fa-mug-hot' },
-    { id: 5, title: '白色手机', type: 'lost', category: '手机', location: '[\"大学生活动中心\",\"咖啡厅\"]', date: '2024-12-16', timeAgo: '4天前', author: '刘同学', phone: '13800138005', description: 'iPhone 14，白色，屏幕有保护膜', icon: 'fa-mobile-alt' },
-    { id: 6, title: '黑框眼镜', type: 'found', category: '更多', location: '[\"教学B楼\",\"1楼自习室\"]', date: '2024-12-15', timeAgo: '5天前', author: '陈同学', phone: '13800138006', description: '黑框近视眼镜，度数约300度', icon: 'fa-glasses' },
-    { id: 7, title: '蓝色钱包', type: 'found', category: '更多', location: '[\"体育场\",\"\"]', date: '2024-12-14', timeAgo: '6天前', author: '周同学', phone: '13800138007', description: '蓝色皮质钱包，内有少量现金', icon: 'fa-wallet' },
-    { id: 8, title: '学生证', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"4楼西南角落\"]', date: '2024-12-13', timeAgo: '1周前', author: '吴同学', phone: '13800138008', description: '', icon: 'fa-id-card' },
-    { id: 9, title: '蓝牙耳机', type: 'lost', category: '更多', location: '[\"信息楼\",\"216\"]', date: '2024-12-12', timeAgo: '1周前', author: '郑同学', phone: '13800138009', description: 'AirPods Pro，带充电盒', icon: 'fa-headphones' },
-    { id: 10, title: '红色水杯', type: 'found', category: '更多', location: '[\"信息楼\",\"实验室\"]', date: '2024-12-11', timeAgo: '8天前', author: '孙同学', phone: '13800138010', description: '红色塑料水杯，带吸管', icon: 'fa-tint' },
-    { id: 11, title: '笔记本电脑', type: 'lost', category: '更多', location: '[\"实验二楼\",\"\"]', date: '2024-12-10', timeAgo: '9天前', author: '钱同学', phone: '13800138011', description: 'MacBook Pro 14寸，深空灰色', icon: 'fa-laptop' },
-    { id: 12, title: '运动手环', type: 'found', category: '更多', location: '[\"体育馆\",\"\"]', date: '2024-12-09', timeAgo: '10天前', author: '冯同学', phone: '13800138012', description: '小米手环7，黑色表带', icon: 'fa-heart-pulse' },
-  ];
+  let allItems = [];
+  // let allItems = [
+  //   { id: 1, title: '丢失校园卡', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"三楼电梯附近\"]', date: '2024-12-20', timeAgo: '2小时前', author: '李同学', phone: '13800138001', description: '', icon: 'fa-id-card' },
+  //   { id: 2, title: '黑色雨伞', type: 'found', category: '雨伞', location: '[\"教学A楼\",\"A401\"]', date: '2024-12-19', timeAgo: '昨天', author: '王同学', phone: '13800138002', description: '黑色折叠伞，伞柄有磨损', icon: 'fa-umbrella' },
+  //   { id: 3, title: '一串钥匙', type: 'lost', category: '钥匙', location: '[\"第一食堂\",\"4楼\"]', date: '2024-12-18', timeAgo: '2天前', author: '张同学', phone: '13800138003', description: '', icon: 'fa-key' },
+  //   { id: 4, title: '保温杯', type: 'found', category: '更多', location: '[\"体育馆\",\"乒乓房\"]', date: '2024-12-17', timeAgo: '3天前', author: '赵同学', phone: '13800138004', description: '银色不锈钢保温杯，约500ml', icon: 'fa-mug-hot' },
+  //   { id: 5, title: '白色手机', type: 'lost', category: '手机', location: '[\"大学生活动中心\",\"咖啡厅\"]', date: '2024-12-16', timeAgo: '4天前', author: '刘同学', phone: '13800138005', description: 'iPhone 14，白色，屏幕有保护膜', icon: 'fa-mobile-alt' },
+  //   { id: 6, title: '黑框眼镜', type: 'found', category: '更多', location: '[\"教学B楼\",\"1楼自习室\"]', date: '2024-12-15', timeAgo: '5天前', author: '陈同学', phone: '13800138006', description: '黑框近视眼镜，度数约300度', icon: 'fa-glasses' },
+  //   { id: 7, title: '蓝色钱包', type: 'found', category: '更多', location: '[\"体育场\",\"\"]', date: '2024-12-14', timeAgo: '6天前', author: '周同学', phone: '13800138007', description: '蓝色皮质钱包，内有少量现金', icon: 'fa-wallet' },
+  //   { id: 8, title: '学生证', type: 'lost', category: '校园卡', location: '[\"图书馆\",\"4楼西南角落\"]', date: '2024-12-13', timeAgo: '1周前', author: '吴同学', phone: '13800138008', description: '', icon: 'fa-id-card' },
+  //   { id: 9, title: '蓝牙耳机', type: 'lost', category: '更多', location: '[\"信息楼\",\"216\"]', date: '2024-12-12', timeAgo: '1周前', author: '郑同学', phone: '13800138009', description: 'AirPods Pro，带充电盒', icon: 'fa-headphones' },
+  //   { id: 10, title: '红色水杯', type: 'found', category: '更多', location: '[\"信息楼\",\"实验室\"]', date: '2024-12-11', timeAgo: '8天前', author: '孙同学', phone: '13800138010', description: '红色塑料水杯，带吸管', icon: 'fa-tint' },
+  //   { id: 11, title: '笔记本电脑', type: 'lost', category: '更多', location: '[\"实验二楼\",\"\"]', date: '2024-12-10', timeAgo: '9天前', author: '钱同学', phone: '13800138011', description: 'MacBook Pro 14寸，深空灰色', icon: 'fa-laptop' },
+  //   { id: 12, title: '运动手环', type: 'found', category: '更多', location: '[\"体育馆\",\"\"]', date: '2024-12-09', timeAgo: '10天前', author: '冯同学', phone: '13800138012', description: '小米手环7，黑色表带', icon: 'fa-heart-pulse' },
+  // ];
+  const Categories = {'校园卡': 'fa-id-card', '雨伞': 'fa-umbrella', '钥匙': 'fa-key', '手机': 'fa-mobile-alt', '杯子': 'fa-mug-hot', '更多': 'fa-ellipsis-h'};
+  let constr = '<button class="category-tag active"><i class="fas fa-check-circle" style="font-size:12px;"></i> 全部</button>';
+  let constr2 = '';
+  for(let key in Categories) {
+    constr += `<button class="category-tag"><i class="fas ${Categories[key]}"></i> ${key}</button>`;
+    constr2 += `<button class="category-option" data-category="${key}" data-icon="${Categories[key]}"><i class="fas ${Categories[key]}"></i> ${key}</button>`;
+  }
+  document.getElementById("category-filter").innerHTML = constr;
+  document.getElementById("category-options").innerHTML = constr2;
+  let totalItems = 0;
 
-  const itemsPerPage = 6;
+  async function fetchItems(page = 1, filters = {}) {
+    try {
+      const params = new URLSearchParams();
+      
+      // 类型筛选
+      if (filters.type && filters.type !== '全部') {
+        params.append('type', filters.type === '丢失' ? 'LOST' : 'FOUND');
+      }
+      
+      // 分类筛选
+      if (filters.category && filters.category !== '全部') {
+        params.append('category', filters.category);
+      }
+      
+      // 关键词搜索
+      if (filters.keyword) {
+        params.append('keyword', filters.keyword);
+      }
+      
+      // 时间筛选
+      if (filters.time && filters.time !== '全部') {
+        params.append('time', filters.time);
+      }
+      
+      // 分页参数
+      params.append('page', page);
+      params.append('pageSize', itemsPerPage);
+      
+      const url = `http://localhost:8080/api/lost-found?${params.toString()}`;
+      console.log('请求URL:', url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.code === 200) {
+        const today = new Date();
+        const data = result.data.list;
+        
+        // 清空现有数据
+        allItems = [];
+        
+        
+        data.forEach(item => {
+          const category = item.category || '更多';
+          if(item.status === 'OPEN') {
+          allItems.push({
+            id: item.id,
+            type: item.type.toLowerCase(),
+            title: item.title,
+            description: item.description || '',
+            category: category,
+            icon: Categories[category] || 'fa-ellipsis-h',
+            location: item.location || '',
+            imageUrls: item.imageUrls || [],
+            status: item.status,
+            date: formatDate(item.occurred_at || item.occurredAt),
+            timeAgo: calculateTimeAgo(item.occurred_at || item.occurredAt),
+            author: item.author ? item.author : '未知',
+            phone: item.contact || ''
+          }); }
+        });
+        
+        totalItems = result.data.total;
+        return true;
+      } else {
+        console.error('获取数据失败:', result.message);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return false;
+    }
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    return date.toISOString().split('T')[0];
+  }
+
+  function calculateTimeAgo(dateStr) {
+    if (!dateStr) return '';
+    const today = new Date();
+    const date = new Date(dateStr);
+    const diffDays = Math.floor((today - date) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return '刚刚';
+    if (diffDays === 1) return '昨天';
+    if (diffDays < 7) return `${diffDays}天前`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)}周前`;
+    return `${Math.floor(diffDays / 30)}个月前`;
+  }
+
+  const itemsPerPage = 9;
   let currentPage = 1;
   let currentFilters = {
     type: '全部',
@@ -1465,6 +1437,150 @@
     keyword: ''
   };
 
+  // 触发搜索（调用后端API）
+  async function triggerSearch() {
+    currentPage = 1;
+    await fetchItems(1, currentFilters);
+    renderItems();
+  }
+
+  // 注册事件监听器
+  function registerEventListeners() {
+    // 筛选按钮点击时触发搜索
+    document.querySelectorAll('.filter-section').forEach(section => {
+      const buttons = section.querySelectorAll('.filter-btn, .category-tag');
+      buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          
+          // 更新筛选条件并触发搜索
+          const sectionTitle = section.querySelector('.filter-section-title').textContent.trim();
+          const filterValue = btn.textContent.trim();
+          
+          if (sectionTitle === '类型') {
+            currentFilters.type = filterValue;
+          } else if (sectionTitle === '分类') {
+            currentFilters.category = filterValue;
+          } else if (sectionTitle === '时间') {
+            currentFilters.time = filterValue;
+          }
+          
+          triggerSearch();
+        });
+      });
+    });
+
+    // 搜索按钮点击时执行筛选
+    document.querySelector('.search-btn').addEventListener('click', () => {
+      const searchInput = document.getElementById('search-input');
+      currentFilters.keyword = searchInput.value.trim();
+      console.log('当前筛选条件:', currentFilters);
+      triggerSearch();
+    });
+
+    // 支持回车键搜索
+    document.getElementById('search-input').addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        document.querySelector('.search-btn').click();
+      }
+    });
+
+    // 分页按钮事件
+    document.querySelector('.pagination button:first-child').addEventListener('click', async () => {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      if (currentPage > 1) {
+        currentPage--;
+        await fetchItems(currentPage, currentFilters);
+        renderItems();
+      }
+    });
+
+    document.querySelector('.pagination button:last-child').addEventListener('click', async () => {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        await fetchItems(currentPage, currentFilters);
+        renderItems();
+      }
+    });
+
+    // 按钮点击动效
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          this.style.transform = '';
+        }, 100);
+      });
+    });
+  }
+
+  async function GetAllItems() {
+    let funcResult = [];
+    try {
+      const params = new URLSearchParams();
+      // 分页参数
+      params.append('page', 1);
+      params.append('pageSize', 500);
+      
+      const url = `http://localhost:8080/api/lost-found?${params.toString()}`;
+      console.log('请求URL:', url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.code === 200) {
+        const today = new Date();
+        const data = result.data.list;
+        
+        data.forEach(item => {
+          const category = item.category || '更多';
+          if(item.status === 'OPEN') {
+          funcResult.push({
+            id: item.id,
+            type: item.type.toLowerCase(),
+            title: item.title,
+            description: item.description || '',
+            category: category,
+            icon: Categories[category] || 'fa-ellipsis-h',
+            location: item.location || '',
+            imageUrls: item.imageUrls || [],
+            status: item.status,
+            date: formatDate(item.occurred_at || item.occurredAt),
+            timeAgo: calculateTimeAgo(item.occurred_at || item.occurredAt),
+            author: item.author ? item.author : '未知',
+            phone: item.contact || ''
+          }); }
+        });
+        return funcResult;
+      } else {
+        console.error('获取数据失败:', result.message);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      return [];
+    }
+  }
+
+  window.onload = async function() {
+    registerEventListeners();
+    await fetchItems(1, currentFilters);
+    renderItems();
+    try {
+      let id = parseInt(new URLSearchParams(window.location.search).get('id',-1));
+      if(id !== -1) {
+        const item = (await GetAllItems()).find(i => i.id === id);
+        if(item) openItem(item);
+      }
+    } catch(e) {}
+  }
   function createCard(item) {
     const badgeClass = item.type === 'lost' ? 'badge lost' : 'badge found';
     const badgeText = item.type === 'lost' ? '丢失' : '捡到';
@@ -1503,43 +1619,16 @@
     `;
   }
 
-  function getFilteredItems() {
-    return allItems.filter(item => {
-      // 类型筛选：丢失或捡到
-      if (currentFilters.type === '丢失' && item.type !== 'lost') return false;
-      if (currentFilters.type === '捡到' && item.type !== 'found') return false;
-      
-      // 分类筛选
-      if (currentFilters.category !== '全部' && item.category !== currentFilters.category) return false;
-      
-      // 关键词搜索
-      if (currentFilters.keyword) {
-        const keyword = currentFilters.keyword.toLowerCase();
-        if (!item.title.toLowerCase().includes(keyword) && 
-            !item.location.toLowerCase().includes(keyword) &&
-            !item.author.toLowerCase().includes(keyword)) {
-          return false;
-        }
-      }
-      
-      return true;
-    });
-  }
-
   function renderItems() {
-    const filteredItems = getFilteredItems();
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const pageItems = filteredItems.slice(startIndex, endIndex);
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
     
     const itemGrid = document.querySelector('.item-grid');
     const pageInfo = document.querySelector('.pagination .page-info');
     
-    if (pageItems.length === 0) {
+    if (allItems.length === 0) {
       itemGrid.innerHTML = '<div style="text-align: center; padding: 40px; color: #94a3b8;">暂无符合条件的记录</div>';
     } else {
-      itemGrid.innerHTML = pageItems.map(createCard).join('');
+      itemGrid.innerHTML = allItems.map(createCard).join('');
     }
     
     pageInfo.textContent = `第${currentPage}页 / 共${totalPages}页`;
@@ -1554,76 +1643,6 @@
     if (currentPage >= totalPages) nextBtn.style.opacity = '0.5';
     else nextBtn.style.opacity = '1';
   }
-
-  // 筛选按钮点击仅切换选中状态，不刷新列表
-  document.querySelectorAll('.filter-section').forEach(section => {
-    const buttons = section.querySelectorAll('.filter-btn, .category-tag');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        
-        // 更新筛选条件（不刷新列表）
-        const sectionTitle = section.querySelector('.filter-section-title').textContent.trim();
-        const filterValue = btn.textContent.trim();
-        
-        if (sectionTitle === '类型') {
-          currentFilters.type = filterValue;
-        } else if (sectionTitle === '分类') {
-          currentFilters.category = filterValue;
-        } else if (sectionTitle === '时间') {
-          currentFilters.time = filterValue;
-        }
-      });
-    });
-  });
-
-  // 搜索按钮点击时执行筛选
-  document.querySelector('.search-btn').addEventListener('click', () => {
-    const searchInput = document.getElementById('search-input');
-    currentFilters.keyword = searchInput.value.trim();
-    currentPage = 1;
-    renderItems();
-  });
-
-  // 支持回车键搜索
-  document.getElementById('search-input').addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') {
-      document.querySelector('.search-btn').click();
-    }
-  });
-
-  // 分页按钮事件
-  document.querySelector('.pagination button:first-child').addEventListener('click', () => {
-    const filteredItems = getFilteredItems();
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    if (currentPage > 1) {
-      currentPage--;
-      renderItems();
-    }
-  });
-
-  document.querySelector('.pagination button:last-child').addEventListener('click', () => {
-    const filteredItems = getFilteredItems();
-    const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderItems();
-    }
-  });
-
-  // 按钮点击动效
-  document.querySelectorAll('button').forEach(btn => {
-    btn.addEventListener('click', function() {
-      this.style.transform = 'scale(0.95)';
-      setTimeout(() => {
-        this.style.transform = '';
-      }, 100);
-    });
-  });
-
-  // 初始化
-  renderItems();
 
   // ===== 发布功能 =====
   const modalOverlay = document.getElementById('publish-modal');
@@ -1674,10 +1693,17 @@
 
   // 打开模态框
   publishBtn.addEventListener('click', () => {
+    if(!localStorage.userInfo) {
+      window.location.href = './login.html';
+      return;
+    }
     modalOverlay.classList.add('show');
     document.body.style.overflow = 'hidden';
     // 默认选中"丢失"类型
     document.getElementById('type-lost').click();
+    document.getElementById('item-date').value = (new Date()).toISOString().substr(0,10);
+    let lui = JSON.parse(localStorage.userInfo);
+    document.getElementById('item-author').value = lui.username[0] + '同学';
   });
 
   // 关闭模态框
@@ -1689,9 +1715,7 @@
     document.querySelectorAll('.category-option').forEach(btn => btn.classList.remove('active'));
     document.getElementById('item-title').value = '';
     locationInput.value = '';
-    document.getElementById('item-date').value = '';
     document.getElementById('item-description').value = '';
-    document.getElementById('item-author').value = '';
     selectLocationBtn.innerHTML = '<i class="fas fa-map-marker-alt"></i> 选择地点';
     locationDetail.value = '';
   }
@@ -1723,104 +1747,122 @@
   });
 
   // 表单提交
-  btnSubmit.addEventListener('click', () => {
+  btnSubmit.addEventListener('click', async () => {
     // 获取表单数据
     const typeBtn = document.querySelector('.type-btn.active');
     const categoryBtn = document.querySelector('.category-option.active');
     
-    const itemType = typeBtn.classList.contains('lost') ? 'lost' : 'found';
+    const itemType = typeBtn.classList.contains('lost') ? 'LOST' : 'FOUND';
     const title = document.getElementById('item-title').value.trim();
     const category = categoryBtn ? categoryBtn.dataset.category : '更多';
     const icon = categoryBtn ? categoryBtn.dataset.icon : 'fa-ellipsis-h';
+    
+    // 处理地点：location为文字描述
     let parsedstr = '';
+    let Composedlocation = '';
     try {
       parsedstr = JSON.parse(locationInput.value);
     } catch (e) {
       parsedstr = '';
     }
-    const location = JSON.stringify([parsedstr, locationDetail.value.trim()]);
-    const date = document.getElementById('item-date').value;
-    const author = document.getElementById('item-author').value.trim();
-    const phone = document.getElementById('item-phone').value.trim();
+
+    Composedlocation = JSON.stringify([parsedstr, locationDetail.value.trim()]);
+    
+    const occurredAt = document.getElementById('item-date').value;
+    const contact = document.getElementById('item-phone').value.trim();
     const description = document.getElementById('item-description').value.trim();
+    const author = document.getElementById('item-author').value.trim();
 
     // 验证必填字段
     if (!title) {
       alert('请输入物品名称');
       return;
     }
-    if (!location || location === JSON.stringify(['', ''])) {
-      alert('请输入地点');
+    if (title.length < 2 || title.length > 200) {
+      alert('标题长度需在2-200字符之间');
       return;
     }
-    if (!date) {
-      alert('请选择日期');
+    if (!categoryBtn) {
+      alert('请选择物品分类');
       return;
     }
-    if (!author) {
-      alert('请输入联系人');
-      return;
-    }
-    if (!phone) {
-      alert('请输入联系电话');
-      return;
-    }
-    if (!/^1\d{10}$/.test(phone)) {
-      alert('请输入正确的11位手机号码');
+    if (!contact) {
+      alert('请输入联系方式');
       return;
     }
 
-    // 获取当前时间
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    let timeAgo = '';
-    
-    if (date === today) {
-      timeAgo = '刚刚';
-    } else {
-      const dateObj = new Date(date);
-      const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) {
-        timeAgo = '昨天';
-      } else if (diffDays < 7) {
-        timeAgo = `${diffDays}天前`;
-      } else if (diffDays < 30) {
-        timeAgo = `${Math.floor(diffDays / 7)}周前`;
-      } else {
-        timeAgo = `${Math.floor(diffDays / 30)}个月前`;
-      }
-    }
-
-    // 创建新物品
-    const newItem = {
-      id: Date.now(),
-      title: title,
+    let lui = JSON.parse(localStorage.userInfo);
+    // 构建请求体
+    const requestBody = {
       type: itemType,
-      category: category,
-      location: location,
-      date: date,
-      timeAgo: timeAgo,
-      author: author,
-      phone: phone,
+      title: title,
       description: description,
-      icon: icon
+      category: category,
+      location: Composedlocation,
+      contact: contact,
+      occurredAt: occurredAt,
+      author: author,
+      userId: lui.id,
+      username: lui.username,
+      avatar: lui.avatarUrl || ""
     };
 
-    // 添加到数组开头
-    allItems.unshift(newItem);
-    
-    // 关闭模态框
-    closeModal();
-    
-    // 显示成功提示
-    successToast.classList.add('show');
-    setTimeout(() => {
-      successToast.classList.remove('show');
-    }, 2000);
-    
-    // 刷新列表
-    currentPage = 1;
-    renderItems();
+    try {
+      // 从localStorage获取token
+      const token = window.localStorage.getItem('authToken');
+      
+      // 发送POST请求
+      const response = await fetch('http://localhost:8080/api/lost-found', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+      const result = await response.json();
+
+      if (result.code === 200) {
+        // 获取当前时间
+        const now = new Date();
+        const today = now.toISOString().split('T')[0];
+        let timeAgo = '';
+        
+        if (occurredAt === today) {
+          timeAgo = '刚刚';
+        } else {
+          const dateObj = new Date(occurredAt);
+          const diffDays = Math.floor((now - dateObj) / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            timeAgo = '昨天';
+          } else if (diffDays < 7) {
+            timeAgo = `${diffDays}天前`;
+          } else if (diffDays < 30) {
+            timeAgo = `${Math.floor(diffDays / 7)}周前`;
+          } else {
+            timeAgo = `${Math.floor(diffDays / 30)}个月前`;
+          }
+        }
+
+        // 关闭模态框
+        closeModal();
+        
+        // 显示成功提示
+        successToast.classList.add('show');
+        setTimeout(() => {
+          successToast.classList.remove('show');
+        }, 2000);
+        
+        // 重新从后端获取数据，刷新列表
+        await triggerSearch();
+      } else {
+        alert(result.message || '发布失败，请重试');
+      }
+    } catch (error) {
+      console.error('发布失败:', error);
+      alert('发布失败，请检查网络连接');
+    }
   });
 
   // ===== 详情弹窗功能 =====
@@ -1846,77 +1888,77 @@
   });
   document.querySelector('.back-btn').addEventListener('click', () => {
     setTimeout(() => {
-          history.back();
+          window.location.href = './index.html';
         }, 200);
   });
 
+  function openItem(item) {
+    // 填充详情内容
+    document.getElementById('detail-icon').innerHTML = `<i class="fas ${item.icon}"></i>`;
+    document.getElementById('detail-title-text').textContent = item.title;
+    
+    // 设置状态标签
+    const badge = document.getElementById('detail-badge');
+    if (item.type === 'lost') {
+      badge.className = 'detail-badge lost';
+      badge.innerHTML = '<i class="fas fa-circle" style="font-size: 10px;"></i> 丢失';
+    } else {
+      badge.className = 'detail-badge found';
+      badge.innerHTML = '<i class="fas fa-circle" style="font-size: 10px;"></i> 捡到';
+    }
+    
+    // 处理地点显示
+    let displayLocation, NavigationElement = '';
+    try {
+      const parsedLocation = JSON.parse(item.location);
+      if(parsedLocation[0] !== undefined) {
+        displayLocation = (typeof (parsedLocation[0]) === 'string' ? parsedLocation[0] : '特定') + ' ' + parsedLocation[1];
+        if(parsedLocation[0] !== '') {
+          let param1 = './map.html?mode=view&'+new URLSearchParams({'selected':JSON.stringify(parsedLocation[0])}).toString();
+          let param2 = '_blank';
+          let param3 = `width=${window.innerWidth},height=${window.innerHeight}`
+          NavigationElement = `
+            <button type="button" class="search-btn-small" style="flex: none; padding: 7px 10px;" onclick="${'window.open(\''+param1+'\', \''+param2+'\', \''+param3+'\')'}">
+              <i class="fas fa-map-marker-alt"></i> 导航
+            </button>
+          `;
+        }
+      } else
+        displayLocation = item.location;
+    } catch (e) {
+      console.error(e);
+      displayLocation = item.location;
+    }
 
+    document.getElementById('detail-location').innerHTML = displayLocation + NavigationElement;
+    document.getElementById('detail-date').textContent = item.date;
+    document.getElementById('detail-time').textContent = item.timeAgo;
+    document.getElementById('detail-author').textContent = item.author;
+    
+    // 显示联系方式（无则显示"无"）
+    document.getElementById('detail-phone').textContent = item.phone && item.phone.trim() ? item.phone : '无';
+    
+    // 显示物品描述（无则显示"无"）
+    document.getElementById('detail-description').textContent = item.description && item.description.trim() ? item.description : '无';
+    
+    // 打开弹窗
+    detailModalOverlay.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
   // 点击卡片显示详情
   document.addEventListener('click', (e) => {
     const itemCard = e.target.closest('.item-card');
     if (itemCard) {
       const itemId = parseInt(itemCard.dataset.id);
       const item = allItems.find(i => i.id === itemId);
-      
-      if (item) {
-        // 填充详情内容
-        document.getElementById('detail-icon').innerHTML = `<i class="fas ${item.icon}"></i>`;
-        document.getElementById('detail-title-text').textContent = item.title;
-        
-        // 设置状态标签
-        const badge = document.getElementById('detail-badge');
-        if (item.type === 'lost') {
-          badge.className = 'detail-badge lost';
-          badge.innerHTML = '<i class="fas fa-circle" style="font-size: 10px;"></i> 丢失';
-        } else {
-          badge.className = 'detail-badge found';
-          badge.innerHTML = '<i class="fas fa-circle" style="font-size: 10px;"></i> 捡到';
-        }
-        
-        // 处理地点显示
-        let displayLocation, NavigationElement = '';
-        try {
-          const parsedLocation = JSON.parse(item.location);
-          if(parsedLocation[0] !== undefined) {
-            displayLocation = (typeof (parsedLocation[0]) === 'string' ? parsedLocation[0] : '特定') + ' ' + parsedLocation[1];
-            let param1 = './map.html?mode=view&'+new URLSearchParams({'selected':JSON.stringify(parsedLocation[0])}).toString();
-            let param2 = '_blank';
-            let param3 = `width=${window.innerWidth},height=${window.innerHeight}`
-            NavigationElement = `
-              <button type="button" class="search-btn-small" style="flex: none; padding: 7px 10px;" onclick="${'window.open(\''+param1+'\', \''+param2+'\', \''+param3+'\')'}">
-                <i class="fas fa-map-marker-alt"></i> 导航
-              </button>
-            `;
-          } else
-            displayLocation = item.location;
-        } catch (e) {
-          console.error(e);
-          displayLocation = item.location;
-        }
-
-        document.getElementById('detail-location').innerHTML = displayLocation + NavigationElement;
-        document.getElementById('detail-date').textContent = item.date;
-        document.getElementById('detail-time').textContent = item.timeAgo;
-        document.getElementById('detail-author').textContent = item.author;
-        
-        // 显示联系电话（无则显示"无"）
-        document.getElementById('detail-phone').textContent = item.phone && item.phone.trim() ? item.phone : '无';
-        
-        // 显示物品描述（无则显示"无"）
-        document.getElementById('detail-description').textContent = item.description && item.description.trim() ? item.description : '无';
-        
-        // 打开弹窗
-        detailModalOverlay.classList.add('show');
-        document.body.style.overflow = 'hidden';
-      }
+      if (item) openItem(item);
     }
   });
 
   // 联系按钮
   detailContactBtn.addEventListener('click', () => {
-    const author = document.getElementById('detail-author').textContent;
-    alert(`已尝试联系 ${author}\n\n联系方式：请通过校园平台私信联系`);
-    closeDetailModal();
+    const contact = document.getElementById('detail-phone').textContent;
+    alert(`联系方式：${contact}`);
   });
 </script>
 </body>

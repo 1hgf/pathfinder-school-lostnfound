@@ -332,9 +332,9 @@
                 </div>
                 
                 <div class="form-group">
-                    <label class="form-label" for="username">用户名</label>
-                    <input type="text" class="form-input" id="username" placeholder="请输入用户名">
-                    <div class="error-message" id="usernameError">请输入用户名</div>
+                    <label class="form-label" for="studentId">学号</label>
+                    <input type="text" class="form-input" id="studentId" placeholder="请输入学号">
+                    <div class="error-message" id="studentIdError">请输入学号</div>
                 </div>
                 
                 <div class="form-group">
@@ -384,6 +384,7 @@
             const passwordStrength = document.getElementById('passwordStrength');
             const strengthBar = document.getElementById('strengthBar');
             const strengthText = document.getElementById('strengthText');
+            const studentIdInput = document.getElementById('studentId');
             
             // 表单状态
             let isRegisterMode = false;
@@ -463,10 +464,12 @@
                 if (!validateForm()) return;
                 
                 // 获取表单数据
-                const formData = {
-                    username: document.getElementById('username').value,
+                let formData = {
+                    studentId: document.getElementById('studentId').value,
                     password: document.getElementById('password').value
                 };
+                if(document.getElementById('name').value)
+                    formData['username'] = document.getElementById('name').value;
                 
                 if (isRegisterMode) {
                     formData.name = document.getElementById('name').value;
@@ -517,7 +520,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                username: formData.username,
+                                studentId: formData.studentId,
                                 password: formData.password
                             })
                         });
@@ -552,12 +555,12 @@
                 let isValid = true;
                 clearErrors();
                 
-                const username = document.getElementById('username').value;
+                const studentId = document.getElementById('studentId').value;
                 const password = document.getElementById('password').value;
                 
-                // 用户名验证
-                if (!username.trim()) {
-                    showError('usernameError', '请输入用户名');
+                // 学号验证
+                if (!studentId.trim()) {
+                    showError('studentIdError', '请输入学号');
                     isValid = false;
                 }
                 
