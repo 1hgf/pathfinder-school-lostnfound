@@ -1,9 +1,10 @@
 package com.campus.module.lostfound.dto;
 
+import com.campus.common.FlexibleLocalDateTimeDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -35,5 +36,6 @@ public class PublishRequest {
     @NotBlank(message = "联系方式不能为空")
     private String contact;
 
+    @JsonDeserialize(using = FlexibleLocalDateTimeDeserializer.class)
     private LocalDateTime occurredAt;
 }

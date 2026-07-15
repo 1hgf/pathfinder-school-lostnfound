@@ -534,8 +534,17 @@
                     
                     // 存储Token
                     if (data.data.token) {
-                        localStorage.setItem('authToken', data.data.token);
-                        localStorage.setItem('userInfo', JSON.stringify(data.data.userInfo));
+                        const d = data.data;
+                        localStorage.setItem('authToken', d.token);
+                        // 后端返回扁平结构 {token,userId,studentId,username,role}，
+                        // 各页面从 userInfo 读 id/username/role，故在此映射
+                        localStorage.setItem('userInfo', JSON.stringify({
+                            id: d.userId,
+                            studentId: d.studentId,
+                            username: d.username,
+                            role: d.role,
+                            avatarUrl: d.avatarUrl || ''
+                        }));
                         // 跳转到首页
                         window.location.href = './index.html';
                     } else {

@@ -1,5 +1,7 @@
 package com.campus.module.lostfound.dto;
 
+import com.campus.common.FlexibleLocalDateTimeDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -29,5 +31,6 @@ public class UpdateRequest {
 
     private String status; // OPEN/CLAIMED/CLOSED
 
+    @JsonDeserialize(using = FlexibleLocalDateTimeDeserializer.class)
     private LocalDateTime occurredAt;
 }
