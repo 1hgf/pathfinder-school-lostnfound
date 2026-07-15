@@ -752,6 +752,7 @@ function renderWaterfallCards(items) {
     });
 }
 
+const Categories = {'校园卡': 'fa-id-card', '雨伞': 'fa-umbrella', '钥匙': 'fa-key', '手机': 'fa-mobile-alt', '杯子': 'fa-mug-hot', '更多': 'fa-ellipsis-h'};
 let lastScrolPos = 0, timerIdxs = [];
 // 加载更多数据
 async function loadMoreData() {
@@ -786,12 +787,55 @@ async function loadMoreData() {
     }
 
     wfIsLoading = false;
+    spawnFlyingIcons();
     if(wfPageCnt > 2) {
         setTimeout(() => {
             if(timerIdxs.length > 0)
                 clearInterval(timerIdxs.pop());
         }, 40);
     }
+}
+
+// 飞行图标粒子动画
+function spawnFlyingIcons() {
+    const catKeys = Object.keys(Categories);
+    const catVals = Object.values(Categories);
+    const count = 12 + Math.floor(Math.random() * 10);
+    const particles = [];
+    for (let i = 0; i < count; i++) {
+        const idx = Math.floor(Math.random() * catKeys.length);
+        const el = document.createElement('i');
+        el.className = 'fas ' + catVals[idx] + ' fly-particle';
+        const startX = Math.random() * window.innerWidth;
+        const startY = window.innerHeight;
+        el.style.transform = 'translate(' + startX + 'px, ' + startY + 'px)';
+        el.style.color = 'hsl(' + Math.random() * 360 + ', 70%, 55%)';
+        el.style.fontSize = (18 + Math.random() * 28) + 'px';
+        document.body.appendChild(el);
+        particles.push({
+            el: el, x: startX, y: startY,
+            vx: (Math.random() - 0.5) * 12,
+            vy: -(8 + Math.random() * 9),
+            gravity: 0.25 + Math.random() * 0.45,
+            rotation: 0,
+            rotSpeed: (Math.random() - 0.5) * 8
+        });
+    }
+    function IconAnimate() {
+        let alive = false;
+        for (const p of particles) {
+            if (p.y > window.innerHeight + 80) continue;
+            alive = true;
+            p.vy += p.gravity;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.rotation += p.rotSpeed;
+            p.el.style.transform = 'translate(' + p.x + 'px, ' + p.y + 'px) rotate(' + p.rotation + 'deg)';
+        }
+        if (alive) requestAnimationFrame(IconAnimate);
+        else particles.forEach(p => p.el.remove());
+    }
+    requestAnimationFrame(IconAnimate);
 }
 
 // 滚动监听
